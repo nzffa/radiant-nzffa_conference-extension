@@ -1,1 +1,4 @@
-%p foo
+- if current_reader.conference_subscription
+  %p You are registered for our conference
+- else
+  %p= link_to "Register for our conference", new_conference_subscription_path

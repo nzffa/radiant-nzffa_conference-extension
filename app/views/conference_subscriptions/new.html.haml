@@ -1,0 +1,29 @@
+%h3 Your details
+
+%p
+  -cols = %w[nzffa_membership_id email phone mobile fax organisation notes description post_line1 post_line2 region postcode post_organisation post_city post_province post_country]
+  -cols.each do |col|
+    %b="#{col.titleize}:"
+    =current_reader[col]
+    %br
+
+%h2 Conference options
+
+- form_for @conference_subscription do |f|
+  = f.hidden_field :reader_id
+  = f.radio_button :single_or_couple, 'single'
+  = f.label :single_or_couple_single, 'Single'
+  %br
+  =f.radio_button :single_or_couple, 'couple'
+  =f.label :single_or_couple_couple, 'Couple'
+  
+  .full
+    = check_box :options, :full_registration
+    = label :options, :full_registration
+    
+  .partial
+    
+  
+  =f.submit 'Register'
+  
+
