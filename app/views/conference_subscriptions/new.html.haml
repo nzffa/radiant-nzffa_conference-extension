@@ -13,17 +13,11 @@
   = f.hidden_field :reader_id
   = f.radio_button :single_or_couple, 'single'
   = f.label :single_or_couple_single, 'Single'
-  %br
   =f.radio_button :single_or_couple, 'couple'
   =f.label :single_or_couple_couple, 'Couple'
   
-  .full
-    = check_box :options, :full_registration
-    = label :options, :full_registration
-    
-  .partial
-    
-  
+  #conference_options= render_group_node(Group.find((Radiant::Config['conference_group_id']|| 257).to_i), :f => f)
+      
   =f.submit 'Register'
   
 

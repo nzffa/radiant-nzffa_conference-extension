@@ -14,6 +14,7 @@ class ConferenceExtension < Radiant::Extension
   end
 
   def activate
+    ConferenceSubscription
     Reader.send :include, Conference::ReaderExtension
     # tab 'Content' do
     #   add_item "Conference", "/admin/conference", :after => "Pages"
