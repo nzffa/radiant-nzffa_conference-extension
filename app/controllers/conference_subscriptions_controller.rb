@@ -1,7 +1,7 @@
 class ConferenceSubscriptionsController < ReaderActionController
   
   def new
-    @conference_subscription = current_reader.build_conference_subscription
+    @conference_subscription = current_reader.conference_subscription || current_reader.build_conference_subscription
   end
   
   def create

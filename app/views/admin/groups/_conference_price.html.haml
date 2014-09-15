@@ -1,0 +1,4 @@
+- if (@group.ancestors + [@group]).include?(conference_group)
+  %p.conference_price
+    = label_tag :group_conference_price, "Conference price"
+    = text_field :group, :conference_price, :maxlength => 100, :class => "textbox", :value => @group.conference_price
