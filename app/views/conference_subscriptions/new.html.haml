@@ -1,11 +1,12 @@
-%h3 Your details
+.details{:style => "float: right;"}
+  %h3 Your details
 
-%p
-  -cols = %w[nzffa_membership_id email phone mobile fax organisation notes description post_line1 post_line2 region postcode post_organisation post_city post_province post_country]
-  -cols.each do |col|
-    %b="#{col.titleize}:"
-    =current_reader[col]
-    %br
+  %p
+    -cols = %w[nzffa_membership_id email phone mobile fax organisation notes description post_line1 post_line2 region postcode post_organisation post_city post_province post_country]
+    -cols.each do |col|
+      %b="#{col.titleize}:"
+      =current_reader[col]
+      %br
 
 %h2 Conference options
 
@@ -16,7 +17,7 @@
   =f.radio_button :single_or_couple, 'couple'
   =f.label :single_or_couple_couple, 'Couple'
   
-  #conference_options= render_group_node(Group.find((Radiant::Config['conference_group_id']|| 257).to_i), :f => f)
+  #conference_options= render_group_node(conference_group, :f => f)
       
   =f.submit 'Register'
   

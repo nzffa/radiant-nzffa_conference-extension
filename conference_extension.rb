@@ -16,6 +16,11 @@ class ConferenceExtension < Radiant::Extension
   def activate
     ConferenceSubscription
     Reader.send :include, Conference::ReaderExtension
+    Admin::GroupsController.class_eval{
+        helper :conference_subscriptions
+      }
+    admin.group.edit.add :form, "conference_price", :after => "edit_group"
+    
     # tab 'Content' do
     #   add_item "Conference", "/admin/conference", :after => "Pages"
     # end
