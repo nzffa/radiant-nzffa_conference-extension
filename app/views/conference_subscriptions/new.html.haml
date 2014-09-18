@@ -17,7 +17,8 @@
   = f.radio_button :single_or_couple, 'couple'
   = f.label :single_or_couple_couple, 'Couple'
   
-  %table#conference_options{:style => "width: 500px"}= render_group_node(conference_group, :f => f)
+  %table#conference_options{:style => "width: 500px"}
+    = render_group_node(conference_group, :f => f)
     %tr
       %td{:style => "text-align: right"} TOTAL
       %td.total
