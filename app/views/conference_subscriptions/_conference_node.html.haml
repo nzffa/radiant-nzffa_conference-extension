@@ -1,10 +1,10 @@
-%tr
-  %td.conference_signup{:style => "padding-left: #{level*15}px", :id => "group_#{group.id}"}
-    = check_box_tag("conference_subscription[group_ids][]", group.id, current_reader.groups.include?(group), :id => "conference_subscription_group_ids_#{group.id}")
-    = label_tag("conference_subscription_group_ids_#{group.id}", group.name)
-    
-  %td.levy
-    = number_to_currency(group.conference_price)
+%li{:style => "padding-left: #{level*15}px", :id => "group_#{group.id}"}    
+  = check_box_tag("conference_subscription[group_ids][]", group.id, current_reader.groups.include?(group), :id => "conference_subscription_group_ids_#{group.id}")
+  = label_tag("conference_subscription_group_ids_#{group.id}", group.name)
 
-- group.children.each do |child|
-  = render_group_node child, :level => level + 1
+  .levy{:style => "float: right"}= number_to_currency(group.conference_price)
+
+  - if group.children.any?
+    %ul
+      - group.children.each do |child|
+        = render_group_node child, :level => level + 1

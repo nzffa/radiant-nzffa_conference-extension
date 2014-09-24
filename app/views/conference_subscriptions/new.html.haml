@@ -17,13 +17,46 @@
   = f.radio_button :single_or_couple, 'couple'
   = f.label :single_or_couple_couple, 'Couple'
   
-  %table#conference_options{:style => "width: 500px"}
+  %ul#conference_options{:style => "width: 500px"}
     = render_group_node(conference_group, :f => f)
-    %tr
-      %td{:style => "text-align: right"} TOTAL
-      %td.total
+    %li{:style => "text-align: right"}
+      TOTAL:
+      %span.total
         
   Payment method:
   
   =f.submit 'Register'
 
+:javascript
+  $("#conference_options").tristate()
+  
+  $("ul#conference_options input[type=checkbox]").change(function(){updateTotal()})
+  
+  function updateTotal(){
+    var total = 0
+    var total_cell = $("ul#conference_options li").last().children(".total")
+  
+    $("ul#conference_options li").first().each(function() {
+  
+      if($(this).children("input:checked").size() > 0){
+        // full conference, don't bother digging
+        price = parseInt( $(this).children(".levy").first().text().split("$")[1] );
+        $(total_cell).html("$ " + price)
+      }
+      else{
+        $("#conference_options ul li input:checked").each(function() {
+          price = parseInt( $(this).parent().children(".levy").first().text().split("$")[1] );
+            if($.isNumeric(price)){
+              total += price
+            }
+            // else{
+            //   $(this).parent.children("ul li ")
+            //   // See if we can derive price from our child groups
+            // }
+
+        });
+        $(total_cell).html("$ " + total)
+      }
+    })
+  }
+  
