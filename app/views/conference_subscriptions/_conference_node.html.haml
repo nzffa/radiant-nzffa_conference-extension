@@ -4,6 +4,7 @@
 
   .levy{:style => "float: right"}= number_to_currency(group.conference_price)
 
+  .description= group.description
   - if group.children.any?
     %ul
       - group.children.each do |child|
