@@ -1,4 +1,4 @@
-%li{:style => "padding-left: #{level*15}px", :id => "group_#{group.id}"}    
+%li{:id => "group_#{group.id}"}
   - if level == 2
     // Day option
     = radio_button_tag("conference_day_#{group.parent.id}_option", group.id, current_reader.groups.include?(group))
@@ -10,7 +10,7 @@
   .levy{:style => "float: right"}= number_to_currency(group.conference_price)
 
   .description= group.description
-  - if group.children.any?
-    %ul
-      - group.children.each do |child|
-        = render_group_node child, :level => level + 1
+- if group.children.any?
+  %ul
+    - group.children.each do |child|
+      = render_conference_group_node child, :level => level + 1
