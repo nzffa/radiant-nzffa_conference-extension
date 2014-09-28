@@ -11,7 +11,7 @@
     = f.label :single_or_couple_couple, 'Couple'
   
     %ul#conference_options{:style => "width: 500px"}
-      = render_group_node(conference_group, :f => f)
+      = render_conference_group_node(conference_group, :f => f)
       %li{:style => "text-align: right"}
         TOTAL:
         %span.total
