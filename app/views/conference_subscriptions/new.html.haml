@@ -29,8 +29,8 @@
 
 :javascript
   $("#conference_options").tristate()
-  
-  $("ul#conference_options input[type=checkbox]").change(function(){updateTotal()})
+  updateTotal()
+  $("ul#conference_options input").change(function(){updateTotal()})
   
   function updateTotal(){
     var total = 0
