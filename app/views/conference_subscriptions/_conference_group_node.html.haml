@@ -10,7 +10,8 @@
   .levy{:style => "float: right"}= number_to_currency(group.conference_price)
 
   .description= group.description
-- if group.children.any?
-  %ul
-    - group.children.each do |child|
-      = render_conference_group_node child, :level => level + 1
+
+  - if group.children.any?
+    %ul
+      - group.children.each do |child|
+        = render_conference_group_node child, :level => level + 1
