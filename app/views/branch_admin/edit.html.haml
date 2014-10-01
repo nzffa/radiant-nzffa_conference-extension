@@ -25,19 +25,17 @@
     updateTotal()
     $("ul#conference_options input").change(function(){
       // If a conference day just got un-checked, uncheck all it's radiobutton day options
-      if(!$(this).checked){
+      if(!$(this).checked && $(this).prop('type') == "checkbox"){
         $(this).parent().find("input[type=radio]").filter(":checked").prop('checked', false)
       }
-    
       updateTotal()
     })
   
     function updateTotal(){
       var total = 0
       var total_cell = $("ul#conference_options li").last().children(".total")
-    
-      $("ul#conference_options li").first().each(function() {
   
+      $("ul#conference_options li").first().each(function() {
         if($(this).children("input:checked").size() > 0){
           // full conference, don't bother digging
           price = parseInt( $(this).children(".levy").first().text().split("$")[1] );
@@ -59,8 +57,6 @@
         }
       })
     }
-  
-  
 
 - else
 
