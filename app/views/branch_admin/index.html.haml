@@ -68,7 +68,7 @@
       %th Address
       %th Edit
     %tbody
-      -@readers.sort {|a,b| a.surname <=> b.surname }.each do |reader|
+      -@readers.sort {|a,b| a.surname.to_s <=> b.surname.to_s }.each do |reader|
         %tr
           %td=reader.nzffa_membership_id
           %td=reader.name
