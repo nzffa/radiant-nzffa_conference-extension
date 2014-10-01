@@ -89,9 +89,10 @@ class ConferenceSubscriptionsController < ReaderActionController
       conference_subscription.paid_amount = result['AmountSettlement']
       conference_subscription.paid_at = Time.now
       conference_subscription.save
-      render :success
+      render :paid
     else
-      render :failure
+      flash[:error] = "Your online payment did not come through. Please try again."
+      render :new
     end
   end
   
