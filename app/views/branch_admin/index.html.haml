@@ -1,5 +1,11 @@
 - if @group == conference_group
   - @readers = Reader.in_groups(Group.all.select{|g| g.is_conference_group?})
+  =link_to "Email current members", branch_admin_email_path(params[:group_id])
+  %br
+
+  =link_to "Download CSV (for Excel)", url_for(:format => :csv)
+  %br
+  
   %h2 Conference registrants
   
   %table{:class => 'px1'}
