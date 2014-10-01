@@ -23,14 +23,28 @@
       TOTAL:
       %span.total
         
-  Payment method:
+  %p Payment method:
   
-  =f.submit 'Register'
+  = f.radio_button :payment_method, 'cheque'
+  = f.label :payment_method_cheque, 'Cheque'
+  = f.radio_button :payment_method, 'direct_debit'
+  = f.label :payment_method_direct_debit, 'Direct debit'
+  = f.radio_button :payment_method, 'Online'
+  = f.label :payment_method_online, 'Online'
+  
+  = f.submit 'Register'
 
 :javascript
   $("#conference_options").tristate()
   updateTotal()
-  $("ul#conference_options input").change(function(){updateTotal()})
+  $("ul#conference_options input").change(function(){
+    // If a conference day just got un-checked, uncheck all it's radiobutton day options
+    if(!$(this).checked){
+      $(this).parent().find("input[type=radio]").filter(":checked").prop('checked', false)
+    }
+    
+    updateTotal()
+  })
   
   function updateTotal(){
     var total = 0

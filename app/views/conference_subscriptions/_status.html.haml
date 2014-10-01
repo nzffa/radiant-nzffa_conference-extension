@@ -1,4 +1,10 @@
 - if current_reader.conference_subscription
-  %p You are registered for our conference
+  %p You are registered for our conference.
+
+  - if current_reader.conference_subscription.paid_amount.to_i == 0
+    %p
+      Your subscription is not yet paid for. Would you like to
+      = link_to "Pay online", pay_online_conference_subscription_path(current_reader.conference_subscription)
+      ?
 - else
   %p= link_to "Register for our conference", new_conference_subscription_path
