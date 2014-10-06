@@ -25,7 +25,7 @@
         
   = f.hidden_field :payment_method, :value => 'online'
   
-  = f.submit 'Register'
+  = f.submit 'Register', :onclick => "return checkRadios()"
 
 :javascript
   $("#conference_options").tristate()
@@ -58,9 +58,24 @@
             if($.isNumeric(price)){
               total += price
             }
-
         });
         $(total_cell).html("$ " + total)
       }
     })
+  }
+  
+  function checkRadios(){
+    var names = []
+    var a_ok = true
+    $("li input[type=radio]").each(function(){ names.push($(this).prop('name')) })
+    $($.unique(names)).each(function(i){
+      var options = $("input[name='"+names[i]+"']")
+      var parent_cb = $(options.first().parents()[2]).children("input[type=checkbox]")
+      var title = parent_cb.parent().children("label").html()
+      if(parent_cb.prop("checked") && !options.filter(":checked").size()){
+        alert("You must select at least one option for " + title + ".")
+        a_ok = false
+      }
+    })
+    return a_ok
   }
