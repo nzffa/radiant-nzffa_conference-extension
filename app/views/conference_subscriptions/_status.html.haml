@@ -4,7 +4,7 @@
   %ul
     - current_reader.groups.select{|g| g.is_conference_group?}.each do |group|
       %li{:style => "list-type: none"}
-        %h5= group.name
+        %h6{:style => "margin: 1px"}= group.name
         = group.description
 
   - if ['cheque', 'direct-credit'].include? subscription.payment_method
@@ -14,9 +14,7 @@
         %p So far we have not received your money, or we did not get round to updating our database yet.
   - elsif subscription.paid_amount.to_i == 0
     %p
-      You said you would like to 
-      = link_to "pay online", pay_online_conference_subscription_path(subscription)
-      ?
+      You can #{link_to "change your subscription", edit_conference_subscription_path(subscription)} or #{link_to "pay online", pay_online_conference_subscription_path(subscription)}.
   - else
     %p Your subscription has been paid for (on-line).
 - else

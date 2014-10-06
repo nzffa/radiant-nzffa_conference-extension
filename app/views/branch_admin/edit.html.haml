@@ -18,7 +18,11 @@
         
     Payment method:
   
-    =f.submit 'Save conference subscription'
+    = f.select :payment_method, options_for_select(["cheque", "direct-debit", "online"])
+    = f.label :paid_amount, "Paid amount"
+    = f.text_field :paid_amount
+      
+    = f.submit 'Save conference subscription'
 
   :javascript
     $("#conference_options").tristate()

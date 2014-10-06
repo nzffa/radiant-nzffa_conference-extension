@@ -1,7 +1,13 @@
 class ConferenceSubscriptionsController < ReaderActionController
   helper :reader
+  before_filter :subscription, :only => [:new, :edit]
+  
   def new
-    @conference_subscription = current_reader.conference_subscription || current_reader.build_conference_subscription
+    
+  end
+  
+  def edit
+    render :new
   end
   
   def create
@@ -97,10 +103,10 @@ class ConferenceSubscriptionsController < ReaderActionController
   end
   
   def reader
-    @reader ||= Reader.find(params[:conference_subscription][:reader_id]|| current_reader.id)
+    @reader ||= Reader.find(params[:conference_subscription] ? params[:conference_subscription][:reader_id] : current_reader.id)
   end
   
   def subscription
-    @subscription ||= reader.conference_subscription || reader.build_conference_subscription
+    @subscription ||= (reader.conference_subscription || reader.build_conference_subscription)
   end
 end

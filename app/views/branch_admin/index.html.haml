@@ -37,14 +37,9 @@
           - if reader.conference_subscription.nil?
             %td{:colspan => 3} Not subscribed
           - else
-            %td
-              // TODO
-              // =reader.conference_subscription.payment_method
-            %td
-              =reader.conference_subscription.single_or_couple == 'couple' ? 2 : 1
-            %td
-              // TODO
-              // =reader.conference_subscription.levy
+            %td=reader.conference_subscription.payment_method
+            %td=reader.conference_subscription.single_or_couple == 'couple' ? 2 : 1
+            %td=number_to_currency reader.conference_subscription.levy
           %td=link_to('Edit', branch_admin_edit_path(params[:group_id], reader.nzffa_membership_id))
 
   

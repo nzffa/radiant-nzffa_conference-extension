@@ -10,7 +10,7 @@
 
 %h2 Conference options
 
-- form_for @conference_subscription do |f|
+- form_for @subscription do |f|
   = f.hidden_field :reader_id
   = f.radio_button :single_or_couple, 'single'
   = f.label :single_or_couple_single, 'Single'
@@ -23,7 +23,7 @@
       TOTAL:
       %span.total
         
-  = f.hidden_field :payment_method, 'online'
+  = f.hidden_field :payment_method, :value => 'online'
   
   = f.submit 'Register'
 
