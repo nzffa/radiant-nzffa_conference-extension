@@ -23,14 +23,7 @@
       TOTAL:
       %span.total
         
-  %p Payment method:
-  
-  = f.radio_button :payment_method, 'cheque'
-  = f.label :payment_method_cheque, 'Cheque'
-  = f.radio_button :payment_method, 'direct_debit'
-  = f.label :payment_method_direct_debit, 'Direct debit'
-  = f.radio_button :payment_method, 'Online'
-  = f.label :payment_method_online, 'Online'
+  = f.hidden_field :payment_method, 'online'
   
   = f.submit 'Register'
 
