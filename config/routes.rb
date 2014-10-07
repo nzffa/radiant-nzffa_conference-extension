@@ -1,4 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :conference_subscriptions, :member => { :pay_online => :get, :payment_finished => :get }
+  map.resources :conference_subscriptions, :member => { :pay_online => :get, :payment_finished => :get }, :collection => { :invite => [:get, :post] }
   
 end

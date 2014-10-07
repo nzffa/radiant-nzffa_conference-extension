@@ -2,14 +2,6 @@ class ConferenceSubscriptionsController < ReaderActionController
   helper :reader
   before_filter :subscription, :only => [:new, :edit]
   
-  def new
-    
-  end
-  
-  def edit
-    render :new
-  end
-  
   def create
     # target_group_ids = params[:conference_subscription][:group_ids].delete
     subscription.update_attributes(params[:conference_subscription])
@@ -44,6 +36,9 @@ class ConferenceSubscriptionsController < ReaderActionController
     end
   end
 
+  def edit
+    render :new
+  end
   
   def update
     # if @conference_subscription.paid?
@@ -75,6 +70,19 @@ class ConferenceSubscriptionsController < ReaderActionController
       redirect_to membership_details_path
     else
       redirect_to branch_admin_path(@template.conference_group)
+    end
+  end
+  
+  def invite
+    if nzffa_id = params[:nzffa_id] and !nzffa_id.blank?
+      reader = Reader.find_by_nzffa_membership_id(nzffa_id)
+      redirect_to branch_admin_edit_path(Radiant::Config['conference_group_id'], reader.nzffa_membership_id) unless reader.nil?
+    end
+    if name = params[:name] and !name.blank?
+      @readers = Reader.all(:conditions => ["surname LIKE :name OR forename LIKE :name", {:name => "%#{name}%"}])
+    end
+    if email = params[:email] and !email.blank?
+      @readers = Reader.all(:conditions => ["email LIKE %?%", name])
     end
   end
   

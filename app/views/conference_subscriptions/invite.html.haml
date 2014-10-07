@@ -1,0 +1,34 @@
+%h3 Conference registration
+
+Search a member to register for the conference:
+
+- form_tag do
+  = label_tag :nzffa_id, "Search by NZFFA id"
+  = text_field_tag :nzffa_id
+  %br
+  = label_tag :name, "Search by name"
+  = text_field_tag :name
+  %br
+  = label_tag :email, "Search by email"
+  = text_field_tag :email
+  
+  = submit_tag("Search")
+  
+- if params[:name]
+  %h4 Results:
+  
+  %table{:class => 'px1'}
+    %thead
+      %th nzffa id
+      %th Name
+      %th Email
+      %th Registered for
+      %th Edit
+    %tbody
+      -@readers.sort {|a,b| a.surname <=> b.surname }.each do |reader|
+        %tr
+          %td=reader.nzffa_membership_id
+          %td=reader.name
+          %td=reader.email
+          %td=reader.groups.select{|g| g.ancestors.include?(conference_group)}.map(&:name).join ", "
+          %td= link_to 'Edit', branch_admin_edit_path(Radiant::Config['conference_group_id'], reader.nzffa_membership_id)
