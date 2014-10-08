@@ -3,6 +3,6 @@ class ConferenceSubscription < ActiveRecord::Base
   serialize :group_ids, Array
   
   def has_group? id
-    group_ids && group_ids.include?(id)
+    group_ids && group_ids.include?(id.to_s)
   end
 end
