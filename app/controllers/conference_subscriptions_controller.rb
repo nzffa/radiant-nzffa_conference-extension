@@ -13,9 +13,10 @@ class ConferenceSubscriptionsController < ReaderActionController
         unless !group.is_conference_group?
           subscription.levy += group.conference_price.to_i
           # look for day options
-          if id = params["conference_day_#{group.id}_option"]
+          if id = params["conference_day_#{id}_option"]
             group = Group.find(id)
             subscription.levy += group.conference_price.to_i
+            subscription.group_ids << id
           end
         end
       end
@@ -49,9 +50,10 @@ class ConferenceSubscriptionsController < ReaderActionController
         unless !group.is_conference_group?
           subscription.levy += group.conference_price.to_i
           # look for day options
-          if id = params["conference_day_#{group.id}_option"]
+          if id = params["conference_day_#{id}_option"]
             group = Group.find(id)
             subscription.levy += group.conference_price.to_i
+            subscription.group_ids << id
           end
         end
       end
