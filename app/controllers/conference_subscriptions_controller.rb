@@ -8,29 +8,25 @@ class ConferenceSubscriptionsController < ReaderActionController
     if subscription.valid?
       subscription.levy = 0
       
-      reader.memberships.select{|m| m.group.is_conference_group?}.each{|m| m.destroy}
-    
-      params["group_ids"].each do |id|
+      subscription.group_ids.each do |id|
         group = Group.find(id)
         unless !group.is_conference_group?
-          reader.groups << group 
           subscription.levy += group.conference_price.to_i
           # look for day options
           if id = params["conference_day_#{group.id}_option"]
             group = Group.find(id)
-            reader.groups << group
             subscription.levy += group.conference_price.to_i
           end
         end
-        
       end
+      
       subscription.save      
     else
       @flash.now[:error] = 'Something went wrong with your subscription'
     end
     
     if reader == current_reader
-      redirect_to membership_details_path
+      redirect_to pay_online_conference_subscription_path(subscription)
     else
       redirect_to branch_admin_path(@template.conference_group)
     end
@@ -48,26 +44,23 @@ class ConferenceSubscriptionsController < ReaderActionController
       # Reset conference groups
       reader.memberships.select{|m| m.group.is_conference_group?}.each{|m| m.destroy}
     
-      params["group_ids"].each do |id|
+      subscription.group_ids.each do |id|
         group = Group.find(id)
         unless !group.is_conference_group?
-          reader.groups << group
           subscription.levy += group.conference_price.to_i
           # look for day options
           if id = params["conference_day_#{group.id}_option"]
             group = Group.find(id)
-            reader.groups << group
             subscription.levy += group.conference_price.to_i
           end
         end
-        
       end
+      
       subscription.save
       flash.now[:notice] = "Your conference subscription has been updated"
-      
     # end
     if reader == current_reader
-      redirect_to membership_details_path
+      redirect_to pay_online_conference_subscription_path(subscription)
     else
       redirect_to branch_admin_path(@template.conference_group)
     end
@@ -102,6 +95,19 @@ class ConferenceSubscriptionsController < ReaderActionController
     if result['Success'] == '1'
       conference_subscription.paid_amount = result['AmountSettlement']
       conference_subscription.paid_at = Time.now
+      
+      conference_subscription.group_ids.each do |id|
+        group = Group.find(id)
+        unless !group.is_conference_group?
+          reader.groups << group
+          # look for day options
+          if id = params["conference_day_#{group.id}_option"]
+            group = Group.find(id)
+            reader.groups << group
+          end
+        end
+      end
+      
       conference_subscription.save
       render :paid
     else

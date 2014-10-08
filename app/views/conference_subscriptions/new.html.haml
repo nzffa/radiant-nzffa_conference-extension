@@ -23,6 +23,8 @@
       TOTAL:
       %span.total
         
+  = f.text_area :notes, :placeholder => "Please enter any special requirements here"
+  %br
   = f.hidden_field :payment_method, :value => 'online'
   
   = f.submit 'Register', :onclick => "return checkRadios()"

@@ -1,21 +1,4 @@
-- if subscription = current_reader.conference_subscription
-  %p You are registered for our conference, here's what you will be doing:
-  
-  %ul
-    - current_reader.groups.select{|g| g.is_conference_group?}.each do |group|
-      %li{:style => "list-type: none"}
-        %h6{:style => "margin: 1px"}= group.name
-        = group.description
-
-  - if ['cheque', 'direct-credit'].include? subscription.payment_method
-    %p
-      You have chosen to pay #{number_to_currency(subscription.levy)} by #{subscription.payment_method}.
-      - if subscription.paid_amount.to_i == 0
-        %p So far we have not received your money, or we did not get round to updating our database yet.
-  - elsif subscription.paid_amount.to_i == 0
-    %p
-      You can #{link_to "change your subscription", edit_conference_subscription_path(subscription)} or #{link_to "pay online", pay_online_conference_subscription_path(subscription)}.
-  - else
-    %p Your subscription has been paid for (on-line).
+- if current_reader.is_registered_for_conference?
+  %p You are registered for our #{link_to "annual conference", reader_dashboard_path}.
 - else
-  %p= link_to "Register for our conference", new_conference_subscription_path
+  %p You are not registered for our annual conference. #{link_to "Register online", new_conference_subscription_path } or alternatively download a #{link_to "subscription form"} you can post with your cheque.

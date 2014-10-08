@@ -1,7 +1,7 @@
 - if @group == conference_group
-  - @conference_subscription = Reader.find_by_nzffa_membership_id(params[:nzffa_membership_id]).conference_subscription || Reader.find_by_nzffa_membership_id(params[:nzffa_membership_id]).build_conference_subscription
+  - @conference_subscription = @reader.conference_subscription || @reader.build_conference_subscription
   
-  %h2 Conference options
+  %h2 Conference registration for #{@reader.name}
 
   - form_for @conference_subscription do |f|
     = f.hidden_field :reader_id
@@ -15,7 +15,10 @@
       %li{:style => "text-align: right"}
         TOTAL:
         %span.total
-        
+    
+    = f.text_area :notes
+    %p.notice Please enter any special requirements here
+    
     Payment method:
     = f.select :payment_method, ["cheque", "direct-debit", "online"]
     %br
