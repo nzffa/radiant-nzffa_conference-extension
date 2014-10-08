@@ -2,6 +2,35 @@ class ConferenceSubscriptionsController < ReaderActionController
   helper :reader
   before_filter :subscription, :only => [:new, :edit]
   
+  def index
+    if current_reader.is_secretary?
+      @readers = Reader.in_groups(Group.all.select{|g| g.is_conference_group?})
+      respond_to do |format|
+        format.csv do
+          if RUBY_VERSION =~ /1.9/
+            require 'csv'
+            csv_lib = CSV
+          else
+            csv_lib = FasterCSV
+          end
+          csv_string = csv_lib.generate do |csv|
+            csv << %w[nzffa_membership_id name email phone postal_address notes]
+            @readers.each do |r|
+              csv << [r.nzffa_membership_id, r.name, r.email, r.phone, r.postal_address_string, r.notes]
+            end
+          end
+
+          headers["Content-Type"] ||= 'text/csv'
+          headers["Content-Disposition"] = "attachment; filename=\"All_conference_registrations_#{DateTime.now.to_s}\""
+          render :text => csv_string
+        end
+      end
+    else
+      flash[:error] = "You do not have secretary access"
+      redirect_to reader_dashboard_url
+    end
+  end
+  
   def create
     # target_group_ids = params[:conference_subscription][:group_ids].delete
     subscription.update_attributes(params[:conference_subscription])
@@ -12,10 +41,12 @@ class ConferenceSubscriptionsController < ReaderActionController
         group = Group.find(id)
         unless !group.is_conference_group?
           subscription.levy += group.conference_price.to_i
+          reader.groups << group unless subscription.payment_method == 'online'
           # look for day options
           if id = params["conference_day_#{id}_option"]
             group = Group.find(id)
             subscription.levy += group.conference_price.to_i
+            reader.groups << group unless subscription.payment_method == 'online'
             subscription.group_ids << id
           end
         end
