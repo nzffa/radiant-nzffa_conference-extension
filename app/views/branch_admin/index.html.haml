@@ -1,84 +1,56 @@
-- if @group == conference_group
-  - @readers = Reader.in_groups(Group.all.select{|g| g.is_conference_group?})
-  =link_to "Email current members", branch_admin_email_path(params[:group_id])
-  %br
+%h2 #{@group.name} Members
 
-  =link_to "Download CSV (for Excel)", url_for(:format => :csv)
+=link_to_unless_current "Current Members", branch_admin_path(params[:group_id])
+%br
+-if params[:group_id].to_i == NzffaSettings.fft_marketplace_group_id
+  =link_to_unless_current "Past FFT members", branch_admin_past_fft_members_path
+-else
+  =link_to_unless_current "Past Members - all", branch_admin_past_members_path(params[:group_id])
   %br
+  =link_to_unless_current "Past Members - last year only", branch_admin_last_year_members_path(params[:group_id])
+%br
+
+=link_to "Email current members", branch_admin_email_path(params[:group_id])
+%br
+
+=link_to "Download CSV (for Excel)", url_for(:format => :csv)
+%br
+- if @group.is_conference_group?
+  = link_to "Download CSV of áll conference members (not just this group)", url_for(:controller => :conference_subscriptions, :action => :index, :format => :csv)
+  %br
+  = link_to "Find a member to register for the conference", :invite_conference_subscriptions
   
-  Attention! While the links above will email/download only the 'full conference' members, the list below also includes people that are registered for any of the conference days.
-  
-  %h2 Conference registrants
-  
-  %table{:class => 'px1'}
-    %thead
-      %th nzffa id
-      %th Name
-      %th Email
-      %th{:style => 'width: 100px'} Phone
-      %th Address
+%table{:class => 'px1'}
+  %thead
+    %th nzffa id
+    %th Name
+    %th Email
+    %th{:style => 'width: 100px'} Phone
+    %th Address
+    - if @group.is_conference_group?
       %th Registered for
       %th Paid by
-      %th Registrants
+      %th # Reg.
       %th Levy
-      %th Edit
-    %tbody
-      -@readers.sort {|a,b| a.surname <=> b.surname }.each do |reader|
-        %tr
-          %td=reader.nzffa_membership_id
-          %td=reader.name
-          %td=reader.email
-          %td
-            =raw [reader.phone, reader.mobile].select{|f| f.present?}.join('<br>')
-          %td
-            =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
-          %td
-            =reader.groups.select{|g| g.ancestors.include?(conference_group)}.map(&:name).join ", "
-          - if reader.conference_subscription.nil?
-            %td{:colspan => 3} Not subscribed
-          - else
-            %td=reader.conference_subscription.payment_method
-            %td=reader.conference_subscription.single_or_couple == 'couple' ? 2 : 1
-            %td=number_to_currency reader.conference_subscription.levy
-          %td=link_to('Edit', branch_admin_edit_path(params[:group_id], reader.nzffa_membership_id))
-
-  
-- else
-  %h2 #{@group.name} Members
-
-  =link_to_unless_current "Current Members", branch_admin_path(params[:group_id])
-  %br
-  -if params[:group_id].to_i == NzffaSettings.fft_marketplace_group_id
-    =link_to_unless_current "Past FFT members", branch_admin_past_fft_members_path
-  -else
-    =link_to_unless_current "Past Members - all", branch_admin_past_members_path(params[:group_id])
-    %br
-    =link_to_unless_current "Past Members - last year only", branch_admin_last_year_members_path(params[:group_id])
-  %br
-
-  =link_to "Email current members", branch_admin_email_path(params[:group_id])
-  %br
-
-  =link_to "Download CSV (for Excel)", url_for(:format => :csv)
-  %br
-
-  %table{:class => 'px1'}
-    %thead
-      %th nzffa id
-      %th Name
-      %th Email
-      %th{:style => 'width: 100px'} Phone
-      %th Address
-      %th Edit
-    %tbody
-      -@readers.sort {|a,b| a.surname.to_s <=> b.surname.to_s }.each do |reader|
-        %tr
-          %td=reader.nzffa_membership_id
-          %td=reader.name
-          %td=reader.email
-          %td
-            =raw [reader.phone, reader.mobile].select{|f| f.present?}.join('<br>')
-          %td
-            =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
-          %td=link_to('Edit', branch_admin_edit_path(params[:group_id], reader.nzffa_membership_id))
-
+      %th Notes
+    %th Edit
+  %tbody
+    -@readers.sort {|a,b| a.surname.to_s <=> b.surname.to_s }.each do |reader|
+      %tr
+        %td=reader.nzffa_membership_id
+        %td=reader.name
+        %td=reader.email
+        %td
+          =raw [reader.phone, reader.mobile].select{|f| f.present?}.join('<br>')
+        %td
+          =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
+        - if @group.is_conference_group?
+          %td=reader.groups.select{|g| g.ancestors.include?(conference_group)}.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
+          %td=reader.conference_subscription.payment_method
+          %td=reader.conference_subscription.single_or_couple == 'couple' ? 2 : 1
+          %td=number_to_currency reader.conference_subscription.levy
+          %td= reader.conference_subscription.notes
+        %td
+          =link_to('Reader', branch_admin_edit_path(params[:group_id], reader.nzffa_membership_id))
+          - if @group.is_conference_group?
+            =link_to('Options', branch_admin_edit_path(params[:group_id], reader.nzffa_membership_id))
