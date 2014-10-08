@@ -16,15 +16,14 @@
         TOTAL:
         %span.total
     
-    = f.text_area :notes
-    %p.notice Please enter any special requirements here
+    = f.text_area :notes, :placeholder => "Please enter any special requirements here"
     
     Payment method:
     = f.select :payment_method, ["cheque", "direct-debit", "online"]
     %br
     = f.label :paid_amount, "Paid amount"
     = f.text_field :paid_amount
-      
+    %br
     = f.submit 'Save conference subscription', :onclick => "return checkRadios()"
   
   %script{:src => "/javascripts/extensions/conference/conference_groups.js"}
