@@ -51,6 +51,7 @@ class ConferenceSubscriptionsController < ReaderActionController
           end
         end
       end
+      subscription.levy *= 2 if subscription.single_or_couple == 'couple'
       
       subscription.save      
     else
@@ -88,7 +89,7 @@ class ConferenceSubscriptionsController < ReaderActionController
           end
         end
       end
-      
+      subscription.levy *= 2 if subscription.single_or_couple == 'couple'
       subscription.save
       flash.now[:notice] = "Your conference subscription has been updated"
     # end
