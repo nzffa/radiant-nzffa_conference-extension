@@ -75,7 +75,7 @@ class ConferenceSubscriptionsController < ReaderActionController
       subscription.update_attributes(params[:conference_subscription])
       subscription.levy = 0
       # Reset conference groups
-      reader.memberships.select{|m| m.group.is_conference_group?}.each{|m| m.destroy}
+      reader.memberships.select{|m| m.group && m.group.is_conference_group?}.each{|m| m.destroy}
     
       subscription.group_ids.each do |id|
         group = Group.find(id)
