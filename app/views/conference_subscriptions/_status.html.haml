@@ -5,4 +5,4 @@
   %p
     You are not registered for our annual conference. #{link_to "Register online", new_conference_subscription_path }
     - if asset = confhome.assets.find_by_asset_content_type('application/pdf')
-      or alternatively download a #{link_to "subscription form", asset.thumbnail('original')} you can post with your cheque.
+      or alternatively download a #{link_to "subscription form", asset.thumbnail('original'), :target => "_blank"} you can post with your cheque.
