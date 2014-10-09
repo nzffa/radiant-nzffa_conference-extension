@@ -41,12 +41,12 @@ class ConferenceSubscriptionsController < ReaderActionController
         group = Group.find(id)
         unless !group.is_conference_group?
           subscription.levy += group.conference_price.to_i
-          reader.groups << group unless subscription.payment_method == 'online'
+          reader.groups << group if subscription.paid?
           # look for day options
           if id = params["conference_day_#{id}_option"]
             group = Group.find(id)
             subscription.levy += group.conference_price.to_i
-            reader.groups << group unless subscription.payment_method == 'online'
+            reader.groups << group if subscription.paid?
             subscription.group_ids << id
           end
         end
@@ -81,11 +81,13 @@ class ConferenceSubscriptionsController < ReaderActionController
         group = Group.find(id)
         unless !group.is_conference_group?
           subscription.levy += group.conference_price.to_i
+          reader.groups << group if subscription.paid?
           # look for day options
           if id = params["conference_day_#{id}_option"]
             group = Group.find(id)
             subscription.levy += group.conference_price.to_i
             subscription.group_ids << id
+            reader.groups << group if subscription.paid?
           end
         end
       end

@@ -1,35 +1,82 @@
 - if @group == conference_group
   - @conference_subscription = @reader.conference_subscription || @reader.build_conference_subscription
   
-  %h2 Conference registration for #{@reader.name}
+  .conference_options
+    %h2 Conference registration for #{@reader.name}
 
-  - form_for @conference_subscription do |f|
-    = f.hidden_field :reader_id
-    = f.radio_button :single_or_couple, 'single'
-    = f.label :single_or_couple_single, 'Single'
-    = f.radio_button :single_or_couple, 'couple'
-    = f.label :single_or_couple_couple, 'Couple'
-  
-    %ul#conference_options{:style => "width: 500px"}
-      = render_conference_group_node(conference_group, :f => f)
-      %li{:style => "text-align: right"}
-        TOTAL:
-        %span.total
-    
-    = f.text_area :notes, :placeholder => "Please enter any special requirements here"
-    
-    Payment method:
-    = f.select :payment_method, ["cheque", "direct-debit", "online"]
-    %br
-    = f.label :paid_amount, "Paid amount"
-    = f.text_field :paid_amount
-    %br
-    = f.submit 'Save conference subscription', :onclick => "return checkRadios()"
-  
-  %script{:src => "/javascripts/extensions/conference/conference_groups.js"}
+    - form_for @conference_subscription do |f|
+      = f.hidden_field :reader_id
+      .member_details{:style => "width: 30%; float: right"}
+        %h2 Update Member Details
+        - f.fields_for :reader do |r|
+          %p
+            =r.label :forename
+            =r.text_field :forename
 
+          %p
+            =r.label :surname
+            =r.text_field :surname
+
+          %p
+            =r.label :nickname
+            =r.text_field :nickname
+
+          %p
+            =r.label :email
+            =r.text_field :email
+
+          %h3 Postal Address
+          %table
+            %tr
+              %td=r.label :post_line1, 'Address', :class => :required
+              %td=r.text_field :post_line1
+            %tr
+              %td=r.label :post_line2, 'Address line 2'
+              %td=r.text_field :post_line2
+            %tr
+              %td=r.label :post_city, 'Town or City', :class => :required
+              %td=r.text_field :post_city
+            %tr
+              %td=r.label :post_province, 'Region'
+              %td=r.text_field :post_province
+            %tr
+              %td=r.label :country
+              %td=r.text_field :post_country
+            %tr
+              %td=r.label :postcode, "Postcode", :class => :required
+              %td=r.text_field :postcode
+
+          %p
+            =r.label :phone
+            =r.text_field :phone
+          %p
+            =r.label :mobile
+            =r.text_field :mobile
+    
+      = f.radio_button :single_or_couple, 'single'
+      = f.label :single_or_couple_single, 'Single'
+      = f.radio_button :single_or_couple, 'couple'
+      = f.label :single_or_couple_couple, 'Couple'
+
+      %ul#conference_options{:style => "width: 500px"}
+        = render_conference_group_node(conference_group, :f => f)
+        %li{:style => "text-align: right"}
+          TOTAL:
+          %span.total
+
+      = f.text_area :notes, :placeholder => "Please enter any special requirements here"
+
+      Payment method:
+      = f.select :payment_method, ["cheque", "direct-debit", "online"]
+      %br
+      = f.label :paid_amount, "Paid amount"
+      = f.text_field :paid_amount
+      %br
+      = f.submit 'Save conference subscription', :onclick => "return checkRadios()"
+
+    %script{:src => "/javascripts/extensions/conference/conference_groups.js"}
+  
 - else
-
   %h2 Update Member Details
 
   - form_for @reader, :url => "/branch_admin/#{params[:group_id]}/update/#{@reader.nzffa_membership_id}" do |f|
