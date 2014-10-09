@@ -1,4 +1,8 @@
 - if current_reader.is_registered_for_conference?
   %p You are registered for our #{link_to "annual conference", reader_dashboard_path}.
 - else
-  %p You are not registered for our annual conference. #{link_to "Register online", new_conference_subscription_path } or alternatively download a #{link_to "subscription form"} you can post with your cheque.
+  - confhome = Group.find(Radiant::Config['conference_group_id'].to_i).homepage
+  %p
+    You are not registered for our annual conference. #{link_to "Register online", new_conference_subscription_path }
+    - if asset = confhome.assets.find_by_asset_content_type('application/pdf')
+      or alternatively download a #{link_to "subscription form", asset.thumbnail('original')} you can post with your cheque.
