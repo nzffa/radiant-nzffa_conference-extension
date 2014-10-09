@@ -51,6 +51,5 @@
           %td=number_to_currency reader.conference_subscription.levy
           %td= reader.conference_subscription.notes
         %td
-          =link_to('Reader', branch_admin_edit_path(params[:group_id], reader.nzffa_membership_id))
-          - if @group.is_conference_group?
-            =link_to('Options', edit_conference_subscription_path(reader.conference_subscription))
+          =link_to('Edit', branch_admin_edit_path(params[:group_id], reader.nzffa_membership_id))
+          
