@@ -36,21 +36,22 @@ class ConferenceSubscriptionsController < ReaderActionController
     subscription.update_attributes(params[:conference_subscription])
     if subscription.valid?
       subscription.levy = 0
-      
+      option_group_ids = []
       subscription.group_ids.each do |id|
         group = Group.find(id)
-        unless !group.is_conference_group?
+        unless !group.is_conference_group? 
           subscription.levy += group.conference_price.to_i
           reader.groups << group if subscription.paid?
           # look for day options
           if id = params["conference_day_#{id}_option"]
             group = Group.find(id)
             subscription.levy += group.conference_price.to_i
+            option_group_ids << id
             reader.groups << group if subscription.paid?
-            subscription.group_ids << id
           end
         end
       end
+      subscription.group_ids.concat option_group_ids
       subscription.levy *= 2 if subscription.single_or_couple == 'couple'
       
       subscription.save      
@@ -76,21 +77,22 @@ class ConferenceSubscriptionsController < ReaderActionController
       subscription.levy = 0
       # Reset conference groups
       reader.memberships.select{|m| m.group && m.group.is_conference_group?}.each{|m| m.destroy}
-    
+      option_group_ids = []
       subscription.group_ids.each do |id|
         group = Group.find(id)
-        unless !group.is_conference_group?
+        unless !group.is_conference_group? 
           subscription.levy += group.conference_price.to_i
           reader.groups << group if subscription.paid?
           # look for day options
           if id = params["conference_day_#{id}_option"]
             group = Group.find(id)
             subscription.levy += group.conference_price.to_i
-            subscription.group_ids << id
+            option_group_ids << id
             reader.groups << group if subscription.paid?
           end
         end
       end
+      subscription.group_ids.concat option_group_ids
       subscription.levy *= 2 if subscription.single_or_couple == 'couple'
       subscription.save
       flash.now[:notice] = "Your conference subscription has been updated"
