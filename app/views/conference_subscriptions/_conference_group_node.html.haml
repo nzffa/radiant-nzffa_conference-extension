@@ -2,10 +2,10 @@
   - if level == 2
     // Day option
     = radio_button_tag("conference_day_#{group.parent.id}_option", group.id, @reader.conference_subscription.has_group?(group.id))
-    = label_tag("conference_day_#{group.parent.id}_option_#{group.id}", group.name)
+    = label_tag("conference_day_#{group.parent.id}_option_#{group.id}", content_tag(:strong, group.name))
   - else
     = check_box_tag("conference_subscription[group_ids][]", group.id, @reader.conference_subscription.has_group?(group.id), :id => "group_ids_#{group.id}")
-    = label_tag("group_ids_#{group.id}", group.name)
+    = label_tag("group_ids_#{group.id}", content_tag(:strong, group.name))
 
   .levy{:style => "float: right"}= number_to_currency(group.conference_price)
 
