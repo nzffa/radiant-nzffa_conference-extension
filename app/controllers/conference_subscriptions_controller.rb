@@ -52,6 +52,9 @@ class ConferenceSubscriptionsController < ReaderActionController
         end
       end
       subscription.group_ids.concat option_group_ids
+      if subscription.group_ids.include? @template.conference_group.id
+        subscription.levy = @template.conference_group.conference_price.to_i
+      end
       subscription.levy *= 2 if subscription.single_or_couple == 'couple'
       
       subscription.save      
@@ -93,6 +96,9 @@ class ConferenceSubscriptionsController < ReaderActionController
         end
       end
       subscription.group_ids.concat option_group_ids
+      if subscription.group_ids.include? @template.conference_group.id
+        subscription.levy = @template.conference_group.conference_price.to_i
+      end
       subscription.levy *= 2 if subscription.single_or_couple == 'couple'
       subscription.save
       flash.now[:notice] = "Your conference subscription has been updated"
