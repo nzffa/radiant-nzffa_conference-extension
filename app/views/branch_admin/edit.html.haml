@@ -26,26 +26,22 @@
             =r.text_field :email
 
           %h3 Postal Address
-          %table
-            %tr
-              %td=r.label :post_line1, 'Address', :class => :required
-              %td=r.text_field :post_line1
-            %tr
-              %td=r.label :post_line2, 'Address line 2'
-              %td=r.text_field :post_line2
-            %tr
-              %td=r.label :post_city, 'Town or City', :class => :required
-              %td=r.text_field :post_city
-            %tr
-              %td=r.label :post_province, 'Region'
-              %td=r.text_field :post_province
-            %tr
-              %td=r.label :country
-              %td=r.text_field :post_country
-            %tr
-              %td=r.label :postcode, "Postcode", :class => :required
-              %td=r.text_field :postcode
-
+          %p
+            = r.label :post_line1, 'Address', :class => :required
+            = r.text_field :post_line1
+            = r.text_field :post_line2
+          %p
+            =r.label :post_city, 'Town or City', :class => :required
+            =r.text_field :post_city
+          %p
+            =r.label :post_province, 'Region'
+            =r.text_field :post_province
+          %p
+            =r.label :country
+            =r.text_field :post_country
+          %p
+            =r.label :postcode, "Postcode", :class => :required
+            =r.text_field :postcode
           %p
             =r.label :phone
             =r.text_field :phone
