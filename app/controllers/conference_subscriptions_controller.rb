@@ -52,7 +52,7 @@ class ConferenceSubscriptionsController < ReaderActionController
         end
       end
       subscription.group_ids.concat option_group_ids
-      if subscription.group_ids.include? @template.conference_group.id
+      if subscription.group_ids.include? @template.conference_group.id.to_s
         subscription.levy = @template.conference_group.conference_price.to_i
       end
       subscription.levy *= 2 if subscription.single_or_couple == 'couple'
@@ -96,7 +96,7 @@ class ConferenceSubscriptionsController < ReaderActionController
         end
       end
       subscription.group_ids.concat option_group_ids
-      if subscription.group_ids.include? @template.conference_group.id
+      if subscription.group_ids.include? @template.conference_group.id.to_s
         subscription.levy = @template.conference_group.conference_price.to_i
       end
       subscription.levy *= 2 if subscription.single_or_couple == 'couple'
