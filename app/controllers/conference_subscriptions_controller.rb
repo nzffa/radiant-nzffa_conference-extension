@@ -129,7 +129,7 @@ class ConferenceSubscriptionsController < ReaderActionController
       @readers = Reader.all(:conditions => ["surname LIKE :name OR forename LIKE :name", {:name => "%#{name}%"}])
     end
     if email = params[:email] and !email.blank?
-      @readers = Reader.all(:conditions => ["email LIKE %?%", name])
+      @readers = Reader.all(:conditions => ["email LIKE ?", "%#{email}%"])
     end
   end
   
