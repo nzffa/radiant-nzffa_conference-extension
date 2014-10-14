@@ -51,9 +51,12 @@ class ConferenceSubscriptionsController < ReaderActionController
       end
       subscription.levy *= 2 if subscription.single_or_couple == 'couple'
       
-      subscription.group_ids.map{ |gid|
-        reader.groups << Group.find(gid)
-      } if subscription.paid?
+      if subscription.paid?
+        subscription.group_ids.map{ |gid|
+          reader.groups << Group.find(gid)
+        }
+        subscription.paid_at ||= Time.now
+      end
       
       subscription.save      
     else
@@ -95,10 +98,13 @@ class ConferenceSubscriptionsController < ReaderActionController
     end
     subscription.levy *= 2 if subscription.single_or_couple == 'couple'
     
-    subscription.group_ids.map{ |gid|
-      reader.groups << Group.find(gid)
-    } if subscription.paid?
-    
+    if subscription.paid?
+      subscription.group_ids.map{ |gid|
+        reader.groups << Group.find(gid)
+      }
+      subscription.paid_at ||= Time.now
+    end
+        
     subscription.save
     flash[:notice] = "Your conference subscription has been updated"
     
