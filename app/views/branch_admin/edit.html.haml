@@ -1,4 +1,4 @@
-- if @group == conference_group
+- if @group.is_conference_group?
   - @conference_subscription = @reader.conference_subscription || @reader.build_conference_subscription
   
   .conference_options
