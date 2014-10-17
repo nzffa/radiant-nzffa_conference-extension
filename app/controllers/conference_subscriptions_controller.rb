@@ -1,7 +1,7 @@
 class ConferenceSubscriptionsController < ReaderActionController
   helper :reader
   before_filter :subscription, :only => [:new, :edit]
-  before_filter :require_secretary_access, :except => [:create, :pay_online, :payment_finished]
+  before_filter :require_secretary_access, :only => [:index, :update, :destroy]
   
   def index
     @readers = Reader.in_groups(Group.all.select{|g| g.is_conference_group?})
