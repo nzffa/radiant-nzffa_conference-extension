@@ -1,25 +1,11 @@
-%h2 #{@group.name} Members
-
-=link_to_unless_current "Current Members", branch_admin_path(params[:group_id])
-%br
--if params[:group_id].to_i == NzffaSettings.fft_marketplace_group_id
-  =link_to_unless_current "Past FFT members", branch_admin_past_fft_members_path
--elsif !@group.is_conference_group?
-  =link_to_unless_current "Past Members - all", branch_admin_past_members_path(params[:group_id])
+-if @group.is_conference_group?
+  %h2 #{@group.name} Registrants
   %br
-  =link_to_unless_current "Past Members - last year only", branch_admin_last_year_members_path(params[:group_id])
-%br
-
-=link_to "Email current members", branch_admin_email_path(params[:group_id])
-%br
-
-=link_to "Download CSV (for Excel)", url_for(:format => :csv)
-%br
-- if @group.is_conference_group?
-  = link_to "Download CSV of áll conference members (not just this group)", url_for(:controller => :conference_subscriptions, :action => :index, :format => :csv)
-  %br
-  = link_to "Find a member to register for the conference", :invite_conference_subscriptions
-  
+  =link_to "Email #{@group.name} registrants", branch_admin_email_path(params[:group_id])
+  =link_to "Download #{@group.name} registrants CSV (for Excel)", url_for(:format => :csv)
+  =link_to "Download CSV of all conference registrants (not just this group)", url_for(:controller => :conference_subscriptions, :action => :index, :format => :csv)
+  =link_to "Find a member to register for the conference", :invite_conference_subscriptions
+%br  
 %table{:class => 'px1'}
   %thead
     %th nzffa id
