@@ -1,4 +1,6 @@
-%h2 #{@group.name} Members
+%h2
+  = @group.name
+  = @group.is_conference_group? ? "Registrants" : "Members"
 
 =link_to_unless_current "Current Members", branch_admin_path(params[:group_id])
 %br
