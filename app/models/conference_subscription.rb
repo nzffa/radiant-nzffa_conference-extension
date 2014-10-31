@@ -11,4 +11,8 @@ class ConferenceSubscription < ActiveRecord::Base
   def paid?
     paid_amount == levy
   end
+  
+  def paid_online?
+    paid? && payment_method == 'online'
+  end
 end
