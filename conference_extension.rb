@@ -25,6 +25,8 @@ class ConferenceExtension < Radiant::Extension
       }
     BranchAdminController.class_eval{
         helper :conference_subscriptions
+        
+        include Conference::BranchAdminExtension
       }
     admin.group.edit.add :form, "conference_price", :after => "edit_group"
     
