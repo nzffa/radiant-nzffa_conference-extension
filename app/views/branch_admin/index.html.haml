@@ -51,7 +51,7 @@
           %td=reader.groups.select{|g| g.ancestors.include?(conference_group)}.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
           - if reader.conference_subscription
             %td= reader.conference_subscription.payment_method
-            %td= reader.conference_subscription.paid_at.strftime("%d %B %H:%M")
+            %td= reader.conference_subscription.paid_at.try(:strftime, "%d %B %H:%M")
             %td= reader.conference_subscription.single_or_couple == 'couple' ? 2 : 1
             %td= number_to_currency reader.conference_subscription.levy
             %td= reader.conference_subscription.notes
