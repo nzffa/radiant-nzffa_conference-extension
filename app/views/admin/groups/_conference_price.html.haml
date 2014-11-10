@@ -2,3 +2,13 @@
   %p.conference_price
     = label_tag :group_conference_price, "Conference price"
     = text_field :group, :conference_price, :maxlength => 100, :class => "textbox", :value => @group.conference_price
+- if @group == conference_group
+  %p.day_registration_fee
+    = label_tag :day_registration_fee, "Day registration fee"
+    = text_field :group, :day_registration_fee, :maxlength => 100, :class => "textbox", :value => @group.day_registration_fee
+    %span{:style => "font-size: 80%"}= "Use this if there is a fee for when day options are selected (as opposed to 'full conference'). Leave blank to not use this."
+- else
+  %p.extra_fee
+    = label_tag :extra_levy, "Extra levy"
+    = text_field :group, :extra_levy, :maxlength => 100, :class => "textbox", :value => @group.day_registration_fee
+    %span{:style => "font-size: 80%"}= "Use this if there is an extra levy for this day option that is not covered by the 'full conference' price."
