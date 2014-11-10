@@ -173,6 +173,7 @@ class ConferenceSubscriptionsController < ReaderActionController
       render :paid
     else
       flash[:error] = "Your online payment did not come through. Please try again."
+      subscription
       render :new
     end
   end
