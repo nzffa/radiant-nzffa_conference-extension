@@ -8,6 +8,29 @@ module Conference::BranchAdminExtension
       end
       alias_method_chain :edit, :conference_hook
       
+      def render_csv_of_readers_with_conference_hook
+        if RUBY_VERSION =~ /1.9/
+          require 'csv'
+          csv_lib = CSV
+        else
+          csv_lib = FasterCSV
+        end
+        if @group.is_conference_group?
+          csv_string = csv_lib.generate do |csv|
+            csv << %w[nzffa_membership_id name email phone postal_address paid_by date_paid registrants levy notes]
+            @readers.each do |r|
+              csv << [r.nzffa_membership_id, r.name, r.email, r.phone, r.postal_address_string, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:single_or_couple) == 'couple' ? 2 : 1, r.conference_subscription.try(:levy), r.conference_subscription.try(:notes)]
+            end
+          end
+          
+          headers["Content-Type"] ||= 'text/csv'
+          headers["Content-Disposition"] = "attachment; filename=\"#{@group.name}_#{action_name}_#{DateTime.now.to_s}\""
+          render :text => csv_string
+        else
+          render_csv_of_readers_without_conference_hook
+        end
+      end
+      alias_method_chain :render_csv_of_readers, :conference_hook
     end
   end
 end
