@@ -31,6 +31,36 @@ module Conference::BranchAdminExtension
         end
       end
       alias_method_chain :render_csv_of_readers, :conference_hook
+      
+      def render_xls_of_readers_with_conference_hook
+        if @group.is_conference_group?
+          columns = %w(nzffa_membership_id name email phone postal_address payment_method date_paid registrants levy notes)
+          require 'spreadsheet'
+          book = Spreadsheet::Workbook.new
+          sheet = book.create_worksheet :name => 'Readers export'
+        
+          sheet.row(0).replace(columns.map{|k| k.capitalize})
+    
+          @readers.each_with_index do |reader, i|
+            sheet.row(i+1).replace(columns.map do |k|
+              case k
+              when 'payment_method', 'notes', 'levy' then reader.conference_subscription.try(:send, k)
+              when 'date_paid' then reader.conference_subscription.try(:paid_at).try(:strftime, "%b %d")
+              when 'registrants' then reader.conference_subscription.try(:single_or_couple) == 'couple' ? 2 : 1
+              else
+                reader.send(k)
+              end
+            end)
+          end
+    
+          tmp_file = Tempfile.new("readers_export")
+          book.write tmp_file
+          send_file tmp_file
+        else
+          render_xls_of_readers_without_conference_hook
+        end
+      end
+      alias_method_chain :render_xls_of_readers, :conference_hook
     end
   end
 end
