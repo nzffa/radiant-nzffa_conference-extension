@@ -9,7 +9,7 @@
           %b="#{col.titleize}:"
           =@reader[col]
           %br
-      %p=link_to 'Update your contact details', register_membership_path
+      %p=link_to 'Update your contact details', update_membership_path
     %td{:style => 'vertical-align: top; width: 50%'}
       %h2 Subscription
       =render 'subscriptions/status'
