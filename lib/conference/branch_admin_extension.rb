@@ -53,9 +53,10 @@ module Conference::BranchAdminExtension
             end)
           end
     
-          tmp_file = Tempfile.new("readers_export")
-          book.write tmp_file
-          send_file tmp_file
+          filename = 'readers_export'
+          tmp_file = Tempfile.new(filename)
+          book.write tmp_file.path
+          send_file tmp_file.path, :filename => filename
         else
           render_xls_of_readers_without_conference_hook
         end
