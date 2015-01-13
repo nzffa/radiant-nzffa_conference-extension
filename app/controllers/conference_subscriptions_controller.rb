@@ -100,6 +100,9 @@ class ConferenceSubscriptionsController < ReaderActionController
       subscription.levy = @template.conference_group.conference_price.to_i
       # After taking 'full conference' price, check for extra levy in day options
       subscription.levy += Group.find(subscription.group_ids).map(&:extra_levy).compact.sum
+    else
+      # Check for day_registration_fees
+      subscription.levy += Group.find(subscription.group_ids).map(&:day_registration_fee).compact.sum
     end
     subscription.levy *= 2 if subscription.single_or_couple == 'couple'
     
