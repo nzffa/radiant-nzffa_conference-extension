@@ -31,27 +31,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     # target_group_ids = params[:conference_subscription][:group_ids].delete
     subscription.update_attributes(params[:conference_subscription])
     if subscription.valid?
-      subscription.levy = 0
-      option_group_ids = []
-      subscription.group_ids.each do |id|
-        group = Group.find(id)
-        unless !group.is_conference_group? 
-          subscription.levy += group.conference_price.to_i
-          # look for day options
-          if id = params["conference_day_#{id}_option"]
-            group = Group.find(id)
-            subscription.levy += group.conference_price.to_i
-            option_group_ids << id
-          end
-        end
-      end
-      subscription.group_ids.concat option_group_ids
-      if subscription.group_ids.include? @template.conference_group.id.to_s
-        subscription.levy = @template.conference_group.conference_price.to_i
-        # After taking 'full conference' price, check for extra levy in day options
-        subscription.levy += Group.find(subscription.group_ids).map(&:extra_levy).compact.sum
-      end
-      subscription.levy *= 2 if subscription.single_or_couple == 'couple'
+      update_subscription_levy_and_group_ids_from_params(subscription, params)
       
       if subscription.paid?
         subscription.group_ids.map{ |gid|
@@ -79,33 +59,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   
   def update
     subscription.update_attributes(params[:conference_subscription])
-    subscription.levy = 0
-    # Reset conference groups
-    reader.memberships.select{|m| m.group && m.group.is_conference_group?}.each{|m| m.destroy}
-    option_group_ids = []
-    subscription.group_ids.each do |id|
-      group = Group.find(id)
-      unless !group.is_conference_group? 
-        subscription.levy += group.conference_price.to_i
-        # look for day options
-        if id = params["conference_day_#{id}_option"]
-          group = Group.find(id)
-          subscription.levy += group.conference_price.to_i
-          option_group_ids << id
-        end
-      end
-    end
-    subscription.group_ids.concat option_group_ids
-    if subscription.group_ids.include? @template.conference_group.id.to_s
-      subscription.levy = @template.conference_group.conference_price.to_i
-      # After taking 'full conference' price, check for extra levy in day options
-      subscription.levy += Group.find(subscription.group_ids).map(&:extra_levy).compact.sum
-    else
-      # Check for day_registration_fees
-      subscription.levy += Group.find(subscription.group_ids).map(&:day_registration_fee).compact.sum
-    end
-    subscription.levy *= 2 if subscription.single_or_couple == 'couple'
-    
+    update_subscription_levy_and_group_ids_from_params(subscription, params)    
     if subscription.paid?
       subscription.group_ids.map{ |gid|
         reader.groups << Group.find(gid)
@@ -199,5 +153,34 @@ class ConferenceSubscriptionsController < ReaderActionController
       flash[:error] = "You do not have secretary access"
       redirect_to reader_dashboard_url and return
     end
+  end
+  
+  def update_subscription_levy_and_group_ids_from_params(subscription, params)
+    subscription.levy = 0
+    option_group_ids = []
+    subscription.group_ids.each do |id|
+      group = Group.find(id)
+      unless !group.is_conference_group? 
+        subscription.levy += group.conference_price.to_i
+        # look for day options
+        if id = params["conference_day_#{id}_option"]
+          group = Group.find(id)
+          subscription.levy += group.conference_price.to_i
+          option_group_ids << id
+        end
+      end
+    end
+    subscription.group_ids.concat option_group_ids
+    if subscription.group_ids.include? @template.conference_group.id.to_s
+      subscription.levy = @template.conference_group.conference_price.to_i
+      # After taking 'full conference' price, check for extra levy in day options
+      subscription.levy += Group.find(subscription.group_ids).map(&:extra_levy).compact.sum
+    else
+      # Check for day_registration_fees
+      subscription.levy += Group.find(subscription.group_ids).map(&:day_registration_fee).compact.sum
+      # Also check the 'full conference' group for a day registration levy (even though it is not checked)
+      subscription.levy += @template.conference_group.day_registration_fee
+    end
+    subscription.levy *= 2 if subscription.single_or_couple == 'couple'
   end
 end
