@@ -42,9 +42,8 @@ module Conference::BranchAdminExtension
           
           sheet.row(0).replace(["#{@group.name} downloaded #{Time.now.strftime("%Y-%m-%d")}"])
           sheet.row(1).replace(columns.map{|k| k.capitalize})
-    
-          @readers.each_with_index do |reader, i|
-            next unless reader.conference_subscription
+          
+          @readers.select{|r| r.conference_subscription }.each_with_index do |reader, i|
             sheet.row(i+2).replace(columns.map do |k|
               case k
               when 'payment_method', 'notes', 'levy' then reader.conference_subscription.try(:send, k)
