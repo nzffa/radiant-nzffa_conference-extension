@@ -38,11 +38,12 @@ module Conference::BranchAdminExtension
           require 'spreadsheet'
           book = Spreadsheet::Workbook.new
           sheet = book.create_worksheet :name => 'Readers export'
-        
-          sheet.row(0).replace(columns.map{|k| k.capitalize})
+          
+          sheet.row(0).replace(["#{@group.name} downloaded #{Time.now.strftime("%Y-%m-%d")}"])
+          sheet.row(1).replace(columns.map{|k| k.capitalize})
     
           @readers.each_with_index do |reader, i|
-            sheet.row(i+1).replace(columns.map do |k|
+            sheet.row(i+2).replace(columns.map do |k|
               case k
               when 'payment_method', 'notes', 'levy' then reader.conference_subscription.try(:send, k)
               when 'date_paid' then reader.conference_subscription.try(:paid_at).try(:strftime, "%b %d")
@@ -53,7 +54,7 @@ module Conference::BranchAdminExtension
             end)
           end
     
-          filename = 'readers_export'
+          filename = "#{@group.name}-#{Time.now.strftime("%Y-%m-%d")}.xls"
           tmp_file = Tempfile.new(filename)
           book.write tmp_file.path
           send_file tmp_file.path, :filename => filename
