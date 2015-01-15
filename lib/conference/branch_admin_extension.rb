@@ -19,6 +19,7 @@ module Conference::BranchAdminExtension
           csv_string = csv_lib.generate do |csv|
             csv << %w[nzffa_membership_id name email phone postal_address paid_by date_paid registrants levy notes]
             @readers.each do |r|
+              next unless r.conference_subscription
               csv << [r.nzffa_membership_id, r.name, r.email, r.phone, r.postal_address_string, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:single_or_couple) == 'couple' ? 2 : 1, r.conference_subscription.try(:levy), r.conference_subscription.try(:notes)]
             end
           end
@@ -43,6 +44,7 @@ module Conference::BranchAdminExtension
           sheet.row(1).replace(columns.map{|k| k.capitalize})
     
           @readers.each_with_index do |reader, i|
+            next unless reader.conference_subscription
             sheet.row(i+2).replace(columns.map do |k|
               case k
               when 'payment_method', 'notes', 'levy' then reader.conference_subscription.try(:send, k)
