@@ -49,6 +49,7 @@ module Conference::BranchAdminExtension
               when 'payment_method', 'notes', 'levy' then reader.conference_subscription.try(:send, k)
               when 'date_paid' then reader.conference_subscription.try(:paid_at).try(:strftime, "%b %d")
               when 'registrants' then reader.conference_subscription.try(:single_or_couple) == 'couple' ? 2 : 1
+              when 'postal_address' then reader.postal_address_string
               else
                 reader.send(k)
               end
