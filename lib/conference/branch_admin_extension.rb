@@ -17,10 +17,10 @@ module Conference::BranchAdminExtension
         end
         if @group.is_conference_group?
           csv_string = csv_lib.generate do |csv|
-            csv << %w[nzffa_membership_id name email phone postal_address paid_by date_paid registrants levy notes]
+            csv << %w[nzffa_membership_id name email phone postal_address paid_by date_paid registrants levy notes do_not_publish_contact_details first_conference]
             @readers.each do |r|
               next unless r.conference_subscription
-              csv << [r.nzffa_membership_id, r.name, r.email, r.phone, r.postal_address_string, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:single_or_couple) == 'couple' ? 2 : 1, r.conference_subscription.try(:levy), r.conference_subscription.try(:notes)]
+              csv << [r.nzffa_membership_id, r.name, r.email, r.phone, r.postal_address_string, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:single_or_couple) == 'couple' ? 2 : 1, r.conference_subscription.try(:levy), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference)]
             end
           end
           
@@ -35,7 +35,7 @@ module Conference::BranchAdminExtension
       
       def render_xls_of_readers_with_conference_hook
         if @group.is_conference_group?
-          columns = %w(nzffa_membership_id name email phone postal_address payment_method date_paid registrants levy notes)
+          columns = %w(nzffa_membership_id name email phone postal_address payment_method date_paid registrants levy notes do_not_publish_contact_details first_conference)
           require 'spreadsheet'
           book = Spreadsheet::Workbook.new
           sheet = book.create_worksheet :name => 'Readers export'
@@ -46,7 +46,7 @@ module Conference::BranchAdminExtension
           @readers.select{|r| r.conference_subscription }.each_with_index do |reader, i|
             sheet.row(i+2).replace(columns.map do |k|
               case k
-              when 'payment_method', 'notes', 'levy' then reader.conference_subscription.try(:send, k)
+              when 'payment_method', 'notes', 'levy', 'do_not_publish_contact_details', 'first_conference' then reader.conference_subscription.try(:send, k).to_s
               when 'date_paid' then reader.conference_subscription.try(:paid_at).try(:strftime, "%b %d")
               when 'registrants' then reader.conference_subscription.try(:single_or_couple) == 'couple' ? 2 : 1
               when 'postal_address' then reader.postal_address_string
