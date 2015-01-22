@@ -9,7 +9,7 @@ class ConferenceSubscription < ActiveRecord::Base
   end
   
   def paid?
-    paid_amount == levy
+    !paid_at.nil?
   end
   
   def paid_online?
