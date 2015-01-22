@@ -25,6 +25,15 @@
         
   = f.text_area :notes, :placeholder => "Please enter any special dietary requirements, your Conference residence and next of kin"
   %br
+  
+  %label{:for => 'conference_subscription_do_not_publish_contact_details'}
+    = f.check_box :do_not_publish_contact_details
+    "Please tick here if you DO NOT want your contact details printed in the conference proceedings"
+  
+  %label{:for => 'conference_subscription_first_conference'}
+    = f.check_box :first_conference
+    Is this your first conference?
+  
   = f.hidden_field :payment_method, :value => 'online'
   
   = f.submit 'Register', :onclick => "return checkRadios()"
