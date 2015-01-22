@@ -32,3 +32,5 @@ Search a member to register for the conference:
           %td=reader.email
           %td=reader.groups.select{|g| g.ancestors.include?(conference_group)}.map(&:name).join ", "
           %td= link_to 'Edit', branch_admin_edit_path(Radiant::Config['conference_group_id'], reader.nzffa_membership_id)
+
+%p .. or #{link_to 'create a new member', new_reader_path}
