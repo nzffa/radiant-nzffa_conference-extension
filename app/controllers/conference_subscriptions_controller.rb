@@ -98,6 +98,7 @@ class ConferenceSubscriptionsController < ReaderActionController
       subscription.update_attribute(:paid_at, Time.now)
     end
     if subscription.paid?
+      subscription.reader.memberships.select{|m| m.group && m.group.is_conference_group?}.each{|m| m.destroy}
       subscription.group_ids.map{ |gid|
         reader.groups << Group.find(gid)
       }
