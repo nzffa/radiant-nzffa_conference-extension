@@ -94,7 +94,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   def update
     subscription.update_attributes(params[:conference_subscription])
     update_subscription_levy_and_group_ids_from_params(subscription, params)
-    if !subscription.paid && subscription.paid_amount > 0
+    if !subscription.paid? && subscription.paid_amount > 0
       subscription.update_attribute(:paid_at, Time.now)
     end
     if subscription.paid?
