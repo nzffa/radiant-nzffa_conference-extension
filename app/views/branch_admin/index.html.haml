@@ -23,7 +23,11 @@
 
 %br
 - if @group.is_conference_group?
-  = link_to "Download CSV of all conference members (not just this group)", url_for(:controller => :conference_subscriptions, :action => :index, :format => :csv)
+  Download all conference subscriptions (not just this group) as
+  = link_to "CSV", url_for(:controller => :conference_subscriptions, :action => :index, :format => :csv)
+  or as
+  = link_to "XLS", url_for(:controller => :conference_subscriptions, :action => :index, :format => :xls)
+  
   %br
   = link_to "Find a member to register for the conference", :invite_conference_subscriptions
   
