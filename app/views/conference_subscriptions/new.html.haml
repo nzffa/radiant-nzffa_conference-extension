@@ -26,13 +26,32 @@
   = f.text_area :notes, :placeholder => "Please enter any special dietary requirements, your Conference residence and next of kin"
   %br
   
+  %br
+  
   %label{:for => 'conference_subscription_do_not_publish_contact_details'}
     = f.check_box :do_not_publish_contact_details
     "Please tick here if you DO NOT want your contact details printed in the conference proceedings"
   
+  %br
+  
   %label{:for => 'conference_subscription_first_conference'}
     = f.check_box :first_conference
     Is this your first conference?
+  
+  %br
+  %label{:for => 'pickup_from_incoming_flight'}
+    Would you like to be met at the airport from your incoming flight? If so, please enter your arrival time and flight:
+    %br
+    = f.text_field :pickup_from_incoming_flight
+    
+  
+  %br
+  %label{:for => 'pickups_from_to_conference'}
+    If you want to be picked up and dropped off from Conference, please enter where you will be staying:
+    %br
+    = f.text_field :pickups_from_to_conference
+  
+  %br
   
   = f.hidden_field :payment_method, :value => 'online'
   
