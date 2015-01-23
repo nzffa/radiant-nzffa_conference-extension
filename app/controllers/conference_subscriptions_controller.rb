@@ -1,6 +1,6 @@
 class ConferenceSubscriptionsController < ReaderActionController
   helper :reader
-  before_filter :subscription, :only => [:new, :edit]
+  before_filter :subscription, :only => [:new, :edit, :receipt]
   before_filter :require_secretary_access, :only => [:index, :destroy]
   
   def index
@@ -84,6 +84,10 @@ class ConferenceSubscriptionsController < ReaderActionController
     else
       redirect_to branch_admin_path(@template.conference_group)
     end
+  end
+  
+  def receipt
+    render :layout => false
   end
 
   def edit

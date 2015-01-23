@@ -1,5 +1,6 @@
 - if current_reader.is_registered_for_conference?
   %p You are registered for our #{link_to "annual conference", reader_dashboard_path}.
+  %p Have a look at #{link_to "your receipt", receipt_conference_subscription_path(current_reader.conference_subscription) } to see what your program looks like.
 - else
   - confhome = Group.find(Radiant::Config['conference_group_id'].to_i).homepage
   %p

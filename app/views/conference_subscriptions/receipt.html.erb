@@ -1,0 +1,82 @@
+<link href='/stylesheets/normalize.css' rel='stylesheet' type='text/css'>
+<link href='/css/subscription-form' rel='stylesheet' type='text/css'>
+<style>
+  /*<![CDATA[*/
+    .price {
+      text-align: right;
+      padding-right: 10px;
+    }
+    b.check-your-details {
+      text-decoration: underline;
+    }
+  /*]]>*/
+</style>
+
+<div class='section'>
+<table style='width: 100%'>
+<tr class='header'>
+<td>
+<div class='nzffa-logo-box'>
+<img alt="Nzffa_print_logo" class="nzffa-logo" src="/images/admin/nzffa_print_logo.png" />
+</div>
+<h2>New Zealand Farm Forestry Association (Inc)</h2>
+<h1>
+Conference subscription / Tax Invoice
+</h1>
+</td>
+<td class='nzffa-address'>
+National Office
+<br>
+PO Box 10349
+<br>
+The Terrace
+<br>
+Wellington 6143
+<br>
+New Zealand
+</td>
+<td class='nzffa-contact-details'>
+Tel +64 4 472 0432
+<br>
+Fax +64 4 473 6904
+<br>
+admin@nzffa.org.nz
+<br>
+www.nzffa.org.nz
+<br>
+GST# 13-843-503
+</td>
+</tr>
+</table>
+</div>
+<div class='section'></div>
+<table style='width: 100%'>
+<tr>
+<td style='width: 70%'>
+Please beware that some day options require an extra levy even if you have registered 'full conference'.
+</td>
+<td class='price' style='width: 30%'>
+Price
+</td>
+</tr>
+<% @reader.groups.select{|g| g.is_conference_group?}.each do |group| %> 
+<tr>
+  <td><b><%= group.name %></b>: <%= group.description %></td>
+  <td class="price"><%= number_to_currency(group.conference_price) %></td>
+</tr>
+<% end %>
+
+<tr>
+<td class='subtotal price'>
+  <b>GST Inclusive Total:</b>
+</td>
+<td class='price'><%= number_to_currency @subscription.levy %></td>
+</tr>
+<tr>
+<td>Tax invoice C<%= @subscription.created_at.strftime("%Y") %>-<%= @reader.nzffa_membership_id%><br/>
+  Paid at <%= @subscription.paid_at.strftime("%d %b %Y") %>
+</td>
+<td></td>
+</tr>
+</table>
+<div class='page-break'></div>
