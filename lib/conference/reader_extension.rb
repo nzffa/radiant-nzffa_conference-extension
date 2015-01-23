@@ -4,6 +4,6 @@ module Conference::ReaderExtension
   end
   
   def is_registered_for_conference?
-    conference_subscription && (conference_subscription.levy == conference_subscription.paid_amount)
+    conference_subscription && (conference_subscription.paid?)
   end
 end
