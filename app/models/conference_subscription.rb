@@ -8,6 +8,10 @@ class ConferenceSubscription < ActiveRecord::Base
     group_ids && group_ids.include?(id.to_s)
   end
   
+  def partner_has_group? id
+    partner_group_ids && partner_group_ids.include?(id.to_s)
+  end
+  
   def paid?
     !paid_at.nil?
   end
