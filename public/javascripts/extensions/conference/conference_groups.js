@@ -13,7 +13,15 @@ $("ul#conference_options input").change(function(){
   updateTotal()
 })
 
-$("input[name*=single_or_couple]").change(function(){ updateTotal() })
+$("input[name*=single_or_couple]").change(function(){
+  if($("input[name*=single_or_couple]:checked").val() == 'couple'){
+    $("input.partner").show()
+  }    
+  else{
+    $("input.partner").hide()
+  }   
+  updateTotal();
+})
 
 function updateTotal(){
   var total = 0
@@ -24,6 +32,11 @@ function updateTotal(){
     if($(this).children("input:checked").size() > 0){
       // use full conference price
       total = parseInt( $(this).children(".levy").first().text().split("$")[1] );
+
+      if($("#conference_subscription_single_or_couple_couple").prop('checked')){
+        total *= 2
+      }
+
       // add extra day option prices if applicable
       $("#conference_options ul li input:checked").each(function() {
         price = parseInt( $(this).parent().attr('data-extra_levy') );
@@ -34,17 +47,26 @@ function updateTotal(){
     }
     else{
       // Add day registration levy if applicable
-      total += parseInt($("ul#conference_options li").first().attr('data-day_registration_fee'))
+      to_add = parseInt($("ul#conference_options li").first().attr('data-day_registration_fee'))
+      if($("#conference_subscription_single_or_couple_couple").prop('checked')){
+        to_add *= 2
+      }
+      total += to_add
       
       $("#conference_options ul li input:checked").each(function() {
         price = parseInt( $(this).parent().children(".levy").first().text().split("$")[1] );
+        if($(this).hasClass('partner') && $("#conference_subscription_single_or_couple_couple").prop('checked') ){
           if($.isNumeric(price)){
             total += price
           }
+        }
+        else{
+          if($.isNumeric(price)){
+            total += price
+          }
+        }
+        
       });
-    }
-    if($("#conference_subscription_single_or_couple_couple").prop('checked')){
-      total *= 2
     }
     $(total_cell).html("$ " + total)
   })
