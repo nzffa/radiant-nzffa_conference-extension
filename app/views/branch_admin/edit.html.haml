@@ -53,6 +53,12 @@
       = f.label :single_or_couple_single, 'Single'
       = f.radio_button :single_or_couple, 'couple'
       = f.label :single_or_couple_couple, 'Couple'
+      
+      %br
+  
+      = f.text_field :partner_name, :placeholder => "Your partner's name", :class => 'partner'
+  
+      %br
 
       %ul#conference_options{:style => "width: 500px"}
         = render_conference_group_node(conference_group, :f => f)
