@@ -17,6 +17,12 @@
   = f.radio_button :single_or_couple, 'couple', {:style => "margin-left: 15px"}
   = f.label :single_or_couple_couple, 'Couple'
   
+  %br
+  
+  = f.text_field :partner_name, :placeholder => "Your partner's name", :class => 'partner'
+  
+  %br
+  
   %ul#conference_options{:style => "width: 500px; padding-left: 15px"}
     = render_conference_group_node(conference_group, :f => f)
     %li{:style => "text-align: right; list-style: none"}
