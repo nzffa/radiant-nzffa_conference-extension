@@ -18,7 +18,7 @@ $("input[name*=single_or_couple]").change(function(){
     $("input.partner").show()
   }    
   else{
-    $("input.partner").hide()
+    $("input.partner").hide().prop('checked', false)
   }   
   updateTotal();
 })
@@ -80,7 +80,7 @@ function checkRadios(){
     var options = $("input[name='"+names[i]+"']")
     var parent_cb = $(options.first().parents()[2]).children("input[type=checkbox]")
     var title = parent_cb.parent().children("label").html()
-    if(parent_cb.prop("checked") && !options.filter(":checked").size()){
+    if(parent_cb.prop("checked") && !options.filter(":checked").size() && (names[i].indexOf('partner_option') == 0 || $("#conference_subscription_single_or_couple_couple").prop('checked') ) ){
       alert("You must select at least one option for " + title + ".")
       a_ok = false
     }
