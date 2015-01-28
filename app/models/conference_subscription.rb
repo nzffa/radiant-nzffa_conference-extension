@@ -26,6 +26,8 @@ class ConferenceSubscription < ActiveRecord::Base
   end
   
   def update_group_ids_strings_to_integers
-    update_attribute :group_ids, group_ids.map{|sid| sid.to_i }
+    if group_ids
+      update_attribute :group_ids, group_ids.map{|sid| sid.to_i }
+    end
   end
 end
