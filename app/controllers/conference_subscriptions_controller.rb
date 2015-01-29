@@ -83,7 +83,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     end
     
     if reader == current_reader
-      redirect_to pay_online_conference_subscription_path(subscription)
+      redirect_to subscription.paid? ? :edit : pay_online_conference_subscription_path(subscription)
     else
       redirect_to branch_admin_path(@template.conference_group)
     end
@@ -117,10 +117,12 @@ class ConferenceSubscriptionsController < ReaderActionController
     subscription.save
     flash[:notice] = "Your conference subscription has been updated"
     
-    if reader == current_reader
+    if !subscription.paid? && subscription.payment_method == 'online'
       redirect_to pay_online_conference_subscription_path(subscription)
-    else
+    elsif current_reader.is_secretary?
       redirect_to branch_admin_path(@template.conference_group)
+    else
+      redirect_to :edit
     end
   end
   
