@@ -6,11 +6,11 @@ class ConferenceSubscription < ActiveRecord::Base
   accepts_nested_attributes_for :reader
   
   def has_group? id
-    group_ids && group_ids.include?(id)
+    group_ids && group_ids.map(&:to_i).include?(id)
   end
   
   def partner_has_group? id
-    partner_group_ids && partner_group_ids.include?(id)
+    partner_group_ids && partner_group_ids.map(&:to_i).include?(id)
   end
   
   def couple?
