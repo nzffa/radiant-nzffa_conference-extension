@@ -53,16 +53,18 @@ GST# 13-843-503
 <table style='width: 100%'>
 <tr>
 <td style='width: 70%'>
-Please beware that some day options require an extra levy even if you have registered 'full conference'.
+  Your information:<br />
+  <p>
+    <%= @subscription.reader.forename %> <%= @subscription.reader.surname %><br />
+    <%= @subscription.reader.postal_address_array.join('<br/>') %>
+  </p>
 </td>
-<td class='price' style='width: 30%'>
-Price
-</td>
+<td class='price' style='width: 30%'> </td>
 </tr>
-<% @reader.groups.select{|g| g.is_conference_group?}.each do |group| %> 
+<% @subscription.reader.groups.select{|g| g.is_conference_group?}.each do |group| %> 
 <tr>
   <td><b><%= group.name %></b>: <%= group.description %></td>
-  <td class="price"><%= number_to_currency(group.conference_price) %></td>
+  <td class="price"> </td>
 </tr>
 <% end %>
 
@@ -70,10 +72,10 @@ Price
 <td class='subtotal price'>
   <b>GST Inclusive Total:</b>
 </td>
-<td class='price'><%= number_to_currency @subscription.levy %></td>
+<td class='price'><%= number_to_currency @subscription.paid_amount %></td>
 </tr>
 <tr>
-<td>Tax invoice C<%= @subscription.created_at.strftime("%Y") %>-<%= @reader.nzffa_membership_id%><br/>
+<td>Tax invoice C<%= @subscription.created_at.strftime("%Y") %>-<%= @subscription.reader.nzffa_membership_id%><br/>
   Paid at <%= @subscription.paid_at.strftime("%d %b %Y") %>
 </td>
 <td></td>
