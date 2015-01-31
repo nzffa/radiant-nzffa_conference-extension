@@ -63,7 +63,7 @@
               %td= reader.conference_subscription.payment_method
               %td= reader.conference_subscription.paid_at.try(:strftime, "%d %B %H:%M")
               %td= reader.conference_subscription.single_or_couple == 'couple' ? 2 : 1
-              %td= number_to_currency reader.conference_subscription.levy
+              %td= number_to_currency reader.conference_subscription.amount_paid
               %td= reader.conference_subscription.notes
             - else
               %td{:colspan => 5} "Not subscribed"
@@ -88,7 +88,7 @@
                 %td= reader.conference_subscription.payment_method
                 %td= reader.conference_subscription.paid_at.try(:strftime, "%d %B %H:%M")
                 %td= reader.conference_subscription.single_or_couple == 'couple' ? 2 : 1
-                %td= number_to_currency reader.conference_subscription.levy
+                %td= number_to_currency reader.conference_subscription.amount_paid
                 %td= reader.conference_subscription.notes
               - else
                 %td{:colspan => 5} "Not subscribed"
