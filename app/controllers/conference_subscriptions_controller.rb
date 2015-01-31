@@ -198,6 +198,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     if params[:id]
       @subscription = ConferenceSubscription.find(params[:id])
       require_secretary_access if @subscription.reader_id != current_reader.id
+      @subscription
     else
       @subscription ||= (reader.conference_subscription || reader.build_conference_subscription)
     end
