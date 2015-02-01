@@ -56,7 +56,11 @@
       
       %br
   
-      = f.text_field :partner_name, :placeholder => "Your partner's name", :class => 'partner'
+      = f.text_field :member_name, :placeholder => "Your own name", :class => 'partner', :style => "display: none"
+      
+      %br
+  
+      = f.text_field :partner_name, :placeholder => "Your partner's name", :class => 'partner', :style => "display: none"
   
       %br
 
