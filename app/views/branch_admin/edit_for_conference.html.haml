@@ -1,0 +1,109 @@
+- @conference_subscription = @reader.conference_subscription || @reader.build_conference_subscription
+
+.conference_options
+  %h2 Conference registration for #{@reader.name}
+
+  - form_for @conference_subscription do |f|
+    = f.hidden_field :reader_id
+    .member_details{:style => "width: 30%; float: right"}
+      %h2 Update Member Details
+      - f.fields_for :reader do |r|
+        %p
+          =r.label :forename
+          =r.text_field :forename
+
+        %p
+          =r.label :surname
+          =r.text_field :surname
+
+        %p
+          =r.label :nickname
+          =r.text_field :nickname
+
+        %p
+          =r.label :email
+          =r.text_field :email
+
+        %h3 Postal Address
+        %p
+          = r.label :post_line1, 'Address', :class => :required
+          = r.text_field :post_line1
+          = r.text_field :post_line2
+        %p
+          =r.label :post_city, 'Town or City', :class => :required
+          =r.text_field :post_city
+        %p
+          =r.label :post_province, 'Region'
+          =r.text_field :post_province
+        %p
+          =r.label :country
+          =r.text_field :post_country
+        %p
+          =r.label :postcode, "Postcode", :class => :required
+          =r.text_field :postcode
+        %p
+          =r.label :phone
+          =r.text_field :phone
+        %p
+          =r.label :mobile
+          =r.text_field :mobile
+  
+    = f.radio_button :single_or_couple, 'single'
+    = f.label :single_or_couple_single, 'Single'
+    = f.radio_button :single_or_couple, 'couple'
+    = f.label :single_or_couple_couple, 'Couple'
+    
+    %br
+
+    = f.text_field :member_name, :placeholder => "Your own name", :class => 'partner', :style => "display: none"
+    
+    %br
+
+    = f.text_field :partner_name, :placeholder => "Your partner's name", :class => 'partner', :style => "display: none"
+
+    %br
+
+    %ul#conference_options{:style => "width: 500px"}
+      = render_conference_group_node(conference_group, :f => f)
+      %li{:style => "text-align: right"}
+        TOTAL:
+        %span.total
+
+    = f.text_area :notes, :placeholder => "Please enter any special dietary requirements, your Conference residence and next of kin"
+
+    %br
+
+    %label{:for => 'conference_subscription_do_not_publish_contact_details'}
+      = f.check_box :do_not_publish_contact_details
+      "Please tick here if you DO NOT want your contact details printed in the conference proceedings"
+
+    %br
+
+    %label{:for => 'conference_subscription_first_conference'}
+      = f.check_box :first_conference
+      Is this your first conference?
+
+    %br
+    %label{:for => 'pickup_from_incoming_flight'}
+      Would you like to be met at the airport from your incoming flight? If so, please enter your arrival time and flight:
+      %br
+      = f.text_field :pickup_from_incoming_flight
+  
+
+    %br
+    %label{:for => 'pickups_from_to_conference'}
+      If you want to be picked up and dropped off from Conference, please enter where you will be staying:
+      %br
+      = f.text_field :pickups_from_to_conference
+    %br
+
+    Payment method:
+    = f.select :payment_method, ["cheque", "direct-credit", "credit-card", "online"]
+    %br
+    = f.label :paid_amount, "Paid amount"
+    = f.text_field :paid_amount
+    %br
+    = f.submit 'Save conference subscription', :onclick => "return checkRadios()"
+
+  %script{:src => "/javascripts/extensions/conference/conference_groups.js"}
+

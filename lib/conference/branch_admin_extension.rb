@@ -2,6 +2,31 @@ module Conference::BranchAdminExtension
   
   def self.included(klass)
     klass.class_eval do
+  
+      def edit_with_conference_hook
+        edit_without_conference_hook
+        if @group.is_conference_group?
+          render :edit_for_conference and return
+        end
+      end
+      alias_method_chain :edit, :conference_hook
+      
+      def index_with_conference_hook
+        if @group.is_conference_group?
+          @group = Group.find(params[:group_id])
+          @readers = @group.readers
+
+          respond_to do |format|
+            format.html { render :index_for_conference }
+            format.csv { render_csv_of_readers_with_conference_hook }
+            format.xls { render_xls_of_readers_with_conference_hook }
+          end
+        else
+          index_without_conference_hook
+        end
+      end
+      alias_method_chain :index, :conference_hook
+      
       def render_csv_of_readers_with_conference_hook
         if RUBY_VERSION =~ /1.9/
           require 'csv'
