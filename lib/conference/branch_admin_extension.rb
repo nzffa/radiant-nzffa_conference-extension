@@ -12,10 +12,9 @@ module Conference::BranchAdminExtension
       alias_method_chain :edit, :conference_hook
       
       def index_with_conference_hook
+        @group = Group.find(params[:group_id])
         if @group.is_conference_group?
-          @group = Group.find(params[:group_id])
           @readers = @group.readers
-
           respond_to do |format|
             format.html { render :index_for_conference }
             format.csv { render_csv_of_readers_with_conference_hook }
