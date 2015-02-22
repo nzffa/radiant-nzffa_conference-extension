@@ -51,7 +51,11 @@
       - if reader.conference_subscription && (!reader.conference_subscription.couple? || reader.conference_subscription.group_ids.map(&:to_i).include?(@group.id))
         %tr
           %td=reader.nzffa_membership_id
-          %td=reader.name
+          %td
+            - if reader.conference_subscription.member_name.blank?
+              = reader.name
+            - else
+              = reader.conference_subscription.member_name
           %td=reader.email
           %td
             =raw [reader.phone, reader.mobile].select{|f| f.present?}.join('<br>')
