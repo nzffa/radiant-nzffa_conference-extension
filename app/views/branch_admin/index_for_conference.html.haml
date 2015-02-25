@@ -2,6 +2,11 @@
   = @group.name
   = @group.is_conference_group? ? "Registrants" : "Members"
 
+%p
+  Do you want to see 
+  = link_to "all conference subscriptions", conference_subscriptions_path
+  (not just this group)?
+
 =link_to_unless_current "Current Members", branch_admin_path(params[:group_id])
 %br
 -if params[:group_id].to_i == NzffaSettings.fft_marketplace_group_id
@@ -21,13 +26,7 @@
   or as 
   = link_to "XLS (for Excel)", url_for(:format => :xls)
 
-%br
 - if @group.is_conference_group?
-  Download all conference subscriptions (not just this group) as
-  = link_to "CSV", url_for(:controller => :conference_subscriptions, :action => :index, :format => :csv)
-  or as
-  = link_to "XLS", url_for(:controller => :conference_subscriptions, :action => :index, :format => :xls)
-  
   %br
   = link_to "Find a member to register for the conference", :invite_conference_subscriptions
   

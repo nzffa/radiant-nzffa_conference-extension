@@ -91,6 +91,9 @@ class ConferenceSubscriptionsController < ReaderActionController
         headers["Content-Disposition"] = "attachment; filename=\"All conference subscriptions-#{DateTime.now.to_s}\""
         render :text => csv_string
       end
+      format.html do
+        
+      end
     end
   end
   
@@ -120,7 +123,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     if reader == current_reader
       redirect_to subscription.paid? ? :edit : pay_online_conference_subscription_path(subscription)
     else
-      redirect_to branch_admin_path(@template.conference_group)
+      redirect_to conference_subscriptions_path
     end
   end
   
