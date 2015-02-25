@@ -53,7 +53,7 @@ GST# 76-367-043
 <table style='width: 100%'>
 <tr>
 <td style='width: 70%'>
-  Your information:<br />
+  <strong>Please check your details and advise if there are any errors to the Registrar's email.</strong><br />
   <p>
     <%= @subscription.reader.forename %> <%= @subscription.reader.surname %><br />
     <%= @subscription.reader.postal_address_array.join('<br/>') %>
@@ -79,6 +79,21 @@ GST# 76-367-043
   Paid at <%= @subscription.paid_at.strftime("%d %b %Y") %>
 </td>
 <td></td>
+</tr>
+
+<tr>
+  <td>
+    <%= "This is your first conference." if @subscription.first_conference %>
+    <%= "<br />You will be staying at #{@subscription.pickups_from_to_conference}" if @subscription.pickups_from_to_conference %>
+    <%= "<br />Your arrival time and flight, for pickup from the airport: #{@subscription.pickup_from_incoming_flight}" if @subscription.pickup_from_incoming_flight %>
+    <%= "<br />You DO NOT want your contact details printed in the conference proceedings" if @subscription.do_not_publish_contact_details %>
+    <br/>
+    Dietary requirements and next of kin:<br/>
+    <%= @subscription.notes %>
+  </td>
+  <td>
+    
+  </td>
 </tr>
 </table>
 <div class='page-break'></div>
