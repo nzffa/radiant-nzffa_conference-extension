@@ -133,6 +133,7 @@ class ConferenceSubscriptionsController < ReaderActionController
 
   def edit
     redirect_to(:back) if @subscription.paid_online?
+    reader
     render :new
   end
   
@@ -227,7 +228,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   end
   
   def reader
-    @reader ||= Reader.find(params[:conference_subscription] ? params[:conference_subscription][:reader_id] : current_reader.id)
+    @reader ||= Reader.find(params[:conference_subscription] ? params[:conference_subscription][:reader_id] : (@subscription.reader_id||current_reader.id))
   end
   
   def subscription
