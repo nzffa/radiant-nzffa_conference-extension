@@ -200,7 +200,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   def payment_finished
     result = PxPayParty.payment_response(params[:result])
     id = result['MerchantReference'].split(':')[1]
-    conference_subscription = ConferenceSubscription.find(id)
+    conference_subscription = subscription
 
     if result['Success'] == '1'
       conference_subscription.paid_amount = result['AmountSettlement']
@@ -223,6 +223,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     else
       flash[:error] = "Your online payment did not come through. Please try again."
       subscription
+      reader
       render :new
     end
   end
