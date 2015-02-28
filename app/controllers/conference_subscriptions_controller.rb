@@ -228,7 +228,13 @@ class ConferenceSubscriptionsController < ReaderActionController
   end
   
   def reader
-    @reader ||= Reader.find(params[:conference_subscription] ? params[:conference_subscription][:reader_id] : (subscription.try(:reader_id)||current_reader.id))
+    @reader ||= if params[:conference_subscription]
+      Reader.find(params[:conference_subscription][:reader_id])
+    elsif params[:id]
+      subscription.reader
+    else
+      current_reader
+    end
   end
   
   def subscription
