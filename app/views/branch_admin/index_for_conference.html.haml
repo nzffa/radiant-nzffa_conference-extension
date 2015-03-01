@@ -46,7 +46,7 @@
     %th Edit
   %tbody
     -@readers.sort {|a,b| a.surname.to_s <=> b.surname.to_s }.each do |reader|
-      - if reader.conference_subscription && (!reader.conference_subscription.couple? || reader.conference_subscription.group_ids.map(&:to_i).include?(@group.id))
+      - if reader.conference_subscription && (!reader.conference_subscription.couple? || reader.conference_subscription.group_ids.to_a.map(&:to_i).include?(@group.id))
         %tr
           %td=reader.nzffa_membership_id
           %td
@@ -59,7 +59,7 @@
             =raw [reader.phone, reader.mobile].select{|f| f.present?}.join('<br>')
           %td
             =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
-          %td=reader.groups.select{|g| g.ancestors.include?(conference_group) && reader.conference_subscription.group_ids.map(&:to_i).include?(g.id)}.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
+          %td=reader.groups.select{|g| g.ancestors.include?(conference_group) && reader.conference_subscription.group_ids.to_a.map(&:to_i).include?(g.id)}.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
           - if reader.conference_subscription
             %td= reader.conference_subscription.payment_method
             %td= reader.conference_subscription.paid_at.try(:strftime, "%d %B %H:%M")
