@@ -132,7 +132,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   end
 
   def edit
-    redirect_to(:back) if @subscription.paid_online?
+    (redirect_to(:back) and return) if @subscription.paid_online?
     reader
     render :new
   end
