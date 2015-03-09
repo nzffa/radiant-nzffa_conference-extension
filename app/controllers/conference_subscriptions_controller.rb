@@ -200,7 +200,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   def payment_finished
     result = PxPayParty.payment_response(params[:result])
     id = result['MerchantReference'].split(':')[1]
-    conference_subscription = subscription
+    conference_subscription = ConferenceSubscription.find(params[:id])
 
     if result['Success'] == '1'
       conference_subscription.paid_amount = result['AmountSettlement']
