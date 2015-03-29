@@ -20,7 +20,11 @@ class ConferenceSubscriptionsController < ReaderActionController
         @readers.select{|r| r.conference_subscription }.each_with_index do |reader, i|
           sheet.row(next_row_index).replace(columns.map do |k|
             case k
-            when 'payment_method', 'notes', 'do_not_publish_contact_details', 'first_conference', 'pickup_from_incoming_flight', 'pickups_from_to_conference' then reader.conference_subscription.try(:send, k).to_s
+            when 'notes', 'do_not_publish_contact_details', 'first_conference', 'pickup_from_incoming_flight', 'pickups_from_to_conference' then reader.conference_subscription.try(:send, k).to_s
+            when 'payment_method' then
+              payment_method = reader.conference_subscription.payment_method
+              payment_method.concat " (#{reader.conference_subscription.id})" if payment_method == 'online'
+              payment_method
             when 'levy' then reader.conference_subscription.try(:paid_amount)
             when 'date_paid' then reader.conference_subscription.try(:paid_at).try(:strftime, "%b %d")
             when 'postal_address' then reader.postal_address_string
@@ -40,7 +44,11 @@ class ConferenceSubscriptionsController < ReaderActionController
             # Add partner row
             sheet.row(next_row_index).replace(columns.map do |k|
               case k
-              when 'payment_method', 'notes', 'do_not_publish_contact_details', 'first_conference', 'pickup_from_incoming_flight', 'pickups_from_to_conference' then reader.conference_subscription.try(:send, k).to_s
+              when 'notes', 'do_not_publish_contact_details', 'first_conference', 'pickup_from_incoming_flight', 'pickups_from_to_conference' then reader.conference_subscription.try(:send, k).to_s
+              when 'payment_method'
+                payment_method = reader.conference_subscription.payment_method
+                payment_method.concat " (#{reader.conference_subscription.id})" if payment_method == 'online'
+                payment_method
               when 'levy' then ""
               when 'date_paid' then reader.conference_subscription.try(:paid_at).try(:strftime, "%b %d")
               when 'postal_address' then reader.postal_address_string

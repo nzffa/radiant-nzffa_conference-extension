@@ -61,7 +61,11 @@
             =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
           %td=reader.groups.select{|g| g.ancestors.include?(conference_group) && reader.conference_subscription.group_ids.to_a.map(&:to_i).include?(g.id)}.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
           - if reader.conference_subscription
-            %td= reader.conference_subscription.payment_method
+            %td
+              - payment_method = reader.conference_subscription.payment_method
+              = payment_method
+              = " (#{reader.conference_subscription.id})" if payment_method == 'online'
+              
             %td= reader.conference_subscription.paid_at.try(:strftime, "%d %B %H:%M")
             %td= number_to_currency reader.conference_subscription.paid_amount
             %td= reader.conference_subscription.notes
@@ -84,7 +88,10 @@
               =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
             %td=reader.groups.select{|g| g.ancestors.include?(conference_group) && (!g.is_conference_day_option? || reader.conference_subscription.partner_group_ids.to_a.map(&:to_i).include?(g.id)) }.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
             - if reader.conference_subscription
-              %td= reader.conference_subscription.payment_method
+              %td
+                - payment_method = reader.conference_subscription.payment_method
+                = payment_method
+                = " (#{reader.conference_subscription.id})" if payment_method == 'online'
               %td= reader.conference_subscription.paid_at.try(:strftime, "%d %B %H:%M")
               %td
               %td= reader.conference_subscription.notes
