@@ -29,6 +29,8 @@ class ConferenceSubscriptionsController < ReaderActionController
               reader.groups.include?(@template.conference_group) ? "Full" : "Partial"
             when 'day_options' then
               reader.groups.select{|g| g.parent && g.parent != @template.conference_group}.map{|g| g.name}.join(", ")
+            when 'name' then
+              reader.conference_subscription.member_name.blank? ? reader.name : reader.conference_subscription.member_name
             else
               reader.send(k)
             end
@@ -78,7 +80,8 @@ class ConferenceSubscriptionsController < ReaderActionController
           csv << %w[nzffa_membership_id name email phone postal_address post_city paid_by date_paid levy notes do_not_publish_contact_details first_conference pickup_from_incoming_flight pickups_from_to_conference registered_for full_registration day_options]
           @readers.each do |r|
             next unless r.conference_subscription
-            csv << [r.nzffa_membership_id, r.name, r.email, r.phone, r.postal_address_string, r.post_city, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group?}.map{|g| g.name }.join(", "), r.groups.include?(@template.conference_group) ? "Full" : "Partial", r.groups.select{|g| g.parent && g.parent != @template.conference_group}.map{|g| g.name}.join(", ") ]
+            name = r.conference_subscription.member_name.blank? ? r.name : r.conference_subscription.member_name
+            csv << [r.nzffa_membership_id, name, r.email, r.phone, r.postal_address_string, r.post_city, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group?}.map{|g| g.name }.join(", "), r.groups.include?(@template.conference_group) ? "Full" : "Partial", r.groups.select{|g| g.parent && g.parent != @template.conference_group}.map{|g| g.name}.join(", ") ]
             if r.conference_subscription.couple?
               # Add row for partner;
               options_string = r.conference_subscription.partner_group_ids.nil? ? r.groups.select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ") : Group.find(r.conference_subscription.partner_group_ids).map{|g| g.name}.join(", ")
