@@ -99,7 +99,7 @@ class ConferenceSubscriptionsController < ReaderActionController
         end
 
         headers["Content-Type"] ||= 'text/csv'
-        headers["Content-Disposition"] = "attachment; filename=\"All conference subscriptions-#{DateTime.now.to_s}\""
+        headers["Content-Disposition"] = "attachment; filename=\"All conference subscriptions-#{DateTime.now.to_s}.csv\""
         render :text => csv_string
       end
       format.html do
