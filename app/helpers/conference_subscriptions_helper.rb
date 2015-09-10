@@ -1,6 +1,6 @@
 module ConferenceSubscriptionsHelper
   def conference_group
-    Group.find((Radiant::Config['conference_group_id']).to_i)
+    Group.conference_groups_holder
   end
 
   def render_conference_group_node(group, locals = {})

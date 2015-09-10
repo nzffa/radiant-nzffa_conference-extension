@@ -30,7 +30,7 @@ class ConferenceSubscriptionsController < ReaderActionController
             when 'postal_address' then reader.postal_address_string
             when 'registered_for' then reader.groups.select{|g| g.is_conference_group?}.map{|g| g.name}.join(", ")
             when 'full_registration' then
-              reader.groups.include?(@template.conference_group) ? "Full" : "Partial"
+              reader.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial"
             when 'day_options' then
               Group.find(reader.conference_subscription.group_ids).select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ")
             when 'name' then
@@ -54,7 +54,7 @@ class ConferenceSubscriptionsController < ReaderActionController
               when 'postal_address' then reader.postal_address_string
               when 'registered_for' then reader.groups.select{|g| g.is_conference_group? && (!g.is_conference_day_option? || reader.conference_subscription.partner_group_ids.to_a.map(&:to_i).include?(g.id))}.map{|g| g.name}.join(", ")
               when 'full_registration' then
-                reader.groups.include?(@template.conference_group) ? "Full" : "Partial"
+                reader.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial"
               when 'day_options' then
                 if reader.conference_subscription.partner_group_ids.nil?
                   reader.groups.select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ")
@@ -89,11 +89,11 @@ class ConferenceSubscriptionsController < ReaderActionController
           @readers.each do |r|
             next unless r.conference_subscription
             name = r.conference_subscription.member_name.blank? ? r.name : r.conference_subscription.member_name
-            csv << [r.nzffa_membership_id, name, r.email, r.phone, r.postal_address_string, r.post_city, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group?}.map{|g| g.name }.join(", "), r.groups.include?(@template.conference_group) ? "Full" : "Partial", Group.find(r.conference_subscription.group_ids).select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ") ]
+            csv << [r.nzffa_membership_id, name, r.email, r.phone, r.postal_address_string, r.post_city, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group?}.map{|g| g.name }.join(", "), r.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial", Group.find(r.conference_subscription.group_ids).select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ") ]
             if r.conference_subscription.couple?
               # Add row for partner;
               options_string = r.conference_subscription.partner_group_ids.nil? ? r.groups.select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ") : Group.find(r.conference_subscription.partner_group_ids).map{|g| g.name}.join(", ")
-              csv << [r.nzffa_membership_id, r.conference_subscription.partner_name, r.email, r.phone, r.postal_address_string, r.post_city, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), "", r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group? && (!g.is_conference_day_option? || r.conference_subscription.partner_group_ids.to_a.map(&:to_i).include?(g.id)) }.map{|g| g.name }.join(", "), r.groups.include?(@template.conference_group) ? "Full" : "Partial", options_string ]
+              csv << [r.nzffa_membership_id, r.conference_subscription.partner_name, r.email, r.phone, r.postal_address_string, r.post_city, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), "", r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group? && (!g.is_conference_day_option? || r.conference_subscription.partner_group_ids.to_a.map(&:to_i).include?(g.id)) }.map{|g| g.name }.join(", "), r.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial", options_string ]
             end
           end
         end
@@ -170,7 +170,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     if !subscription.paid? && subscription.payment_method == 'online'
       redirect_to pay_online_conference_subscription_path(subscription)
     elsif current_reader.is_secretary?
-      redirect_to branch_admin_path(@template.conference_group)
+      redirect_to branch_admin_path(Group.conference_groups_holder)
     else
       redirect_to :edit
     end
@@ -190,7 +190,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   def invite
     if nzffa_id = params[:nzffa_id] and !nzffa_id.blank?
       reader = Reader.find_by_nzffa_membership_id(nzffa_id)
-      redirect_to branch_admin_edit_path(Radiant::Config['conference_group_id'], reader.nzffa_membership_id) unless reader.nil?
+      redirect_to branch_admin_edit_path(Radiant::Config['conference.root_group_id'], reader.nzffa_membership_id) unless reader.nil?
     end
     if name = params[:name] and !name.blank?
       @readers = Reader.all(:conditions => ["surname LIKE :name OR forename LIKE :name", {:name => "%#{name}%"}])
@@ -295,8 +295,8 @@ class ConferenceSubscriptionsController < ReaderActionController
     subscription.group_ids.concat option_group_ids
     subscription.partner_group_ids = partner_option_group_ids
     
-    if subscription.group_ids.map(&:to_i).include? @template.conference_group.id
-      subscription.levy = @template.conference_group.conference_price.to_i
+    if subscription.group_ids.map(&:to_i).include? Group.conference_groups_holder.id
+      subscription.levy = Group.conference_groups_holder.conference_price.to_i
       subscription.levy *= 2 if subscription.couple?
       # After taking 'full conference' price, check for extra levy in day options
       subscription.levy += Group.find(subscription.group_ids).map(&:extra_levy).compact.sum
@@ -306,8 +306,8 @@ class ConferenceSubscriptionsController < ReaderActionController
       end
     else
       # Also check the 'full conference' group for a day registration levy (even though it is not checked)
-      subscription.levy += @template.conference_group.day_registration_fee
-      subscription.levy += @template.conference_group.day_registration_fee if subscription.couple?
+      subscription.levy += Group.conference_groups_holder.day_registration_fee
+      subscription.levy += Group.conference_groups_holder.day_registration_fee if subscription.couple?
       # Check for day_registration_fees
       subscription.levy += Group.find(subscription.group_ids).map(&:day_registration_fee).compact.sum
       # Check for day_registration_fees for partner

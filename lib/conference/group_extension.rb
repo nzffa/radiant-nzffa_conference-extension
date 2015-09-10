@@ -1,10 +1,30 @@
 module Conference::GroupExtension
+  def self.included(klass)
+    klass.class_eval do
+      def self.conference_groups
+        begin
+          self.conference_groups_holder.children
+        rescue ActiveRecord::RecordNotFound
+          []
+        end
+      end
+      
+      def self.conference_groups_holder
+        begin
+          find(Radiant::Config['conference.root_group_id'])
+        rescue ActiveRecord::RecordNotFound
+          nil
+        end
+      end
+    end
+  end
+  
   def is_conference_group?
-    conference_group = Group.find(Radiant::Config['conference_group_id'])
-    return (self == conference_group || self.ancestors.include?(conference_group))
+    return (self == Group.conference_groups_holder || Group.conference_groups.include?(self))
   end
   
   def is_conference_day_option?
     is_conference_group? && parent && !parent.parent_id.nil?
   end
+  
 end

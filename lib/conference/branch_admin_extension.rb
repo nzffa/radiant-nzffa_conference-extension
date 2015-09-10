@@ -42,14 +42,14 @@ module Conference::BranchAdminExtension
                 name = r.conference_subscription.member_name.blank? ? r.name : r.conference_subscription.member_name
                 payment_method = r.conference_subscription.payment_method
                 payment_method.concat " (#{r.conference_subscription.id})" if payment_method == 'online'
-                csv << [r.nzffa_membership_id, name, r.email, r.phone, r.postal_address_string, r.post_city, payment_method, r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group? && r.conference_subscription.group_ids.map(&:to_i).include?(g.id)}.map{|g| g.name }.join(", "), r.groups.include?(@template.conference_group) ? "Full" : "Partial", r.groups.select{|g| g.is_conference_day_option? && r.conference_subscription.group_ids.include?(g.id)}.map{|g| g.name}.join(", ") ]
+                csv << [r.nzffa_membership_id, name, r.email, r.phone, r.postal_address_string, r.post_city, payment_method, r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group? && r.conference_subscription.group_ids.map(&:to_i).include?(g.id)}.map{|g| g.name }.join(", "), r.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial", Group.find(r.conference_subscription.group_ids).map{|g| g.name}.join(", ") ]
               end
-              if r.conference_subscription.couple? && (r.conference_subscription.partner_group_ids.try(:include?, @group.id) || [@group.id, @group.parent_id].include?(Radiant::Config['conference_group_id'].to_i))
+              if r.conference_subscription.couple? && (r.conference_subscription.partner_group_ids.try(:include?, @group.id) || [@group.id, @group.parent_id].include?(Radiant::Config['conference.root_group_id'].to_i))
                 # Add row for partner;
                 options_string = r.conference_subscription.partner_group_ids.nil? ? r.groups.select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ") : Group.find(r.conference_subscription.partner_group_ids).map{|g| g.name}.join(", ")
                 payment_method = r.conference_subscription.payment_method
                 payment_method.concat " (#{r.conference_subscription.id})" if payment_method == 'online'
-                csv << [r.nzffa_membership_id, r.conference_subscription.partner_name, r.email, r.phone, r.postal_address_string, r.post_city, payment_method, r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), "", r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group? && (!g.is_conference_day_option? || r.conference_subscription.partner_group_ids.to_a.map(&:to_i).include?(g.id)) }.map{|g| g.name }.join(", "), r.groups.include?(@template.conference_group) ? "Full" : "Partial", options_string ]
+                csv << [r.nzffa_membership_id, r.conference_subscription.partner_name, r.email, r.phone, r.postal_address_string, r.post_city, payment_method, r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), "", r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group? && (!g.is_conference_day_option? || r.conference_subscription.partner_group_ids.to_a.map(&:to_i).include?(g.id)) }.map{|g| g.name }.join(", "), r.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial", options_string ]
               end
             end
           end
@@ -89,9 +89,9 @@ module Conference::BranchAdminExtension
                 when 'postal_address' then reader.postal_address_string
                 when 'registered_for' then reader.groups.select{|g| g.is_conference_group? && reader.conference_subscription.group_ids.map(&:to_i).include?(g.id)}.map{|g| g.name}.join(", ")
                 when 'full_registration' then
-                  reader.groups.include?(@template.conference_group) ? "Full" : "Partial"
+                  reader.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial"
                 when 'day_options' then
-                  reader.groups.select{|g| g.is_conference_day_option? && reader.conference_subscription.group_ids.include?(g.id)}.map{|g| g.name}.join(", ")
+                  Group.find(reader.conference_subscription.group_ids).map{|g| g.name}.join(", ")
                 when 'name' then
                   reader.conference_subscription.member_name.blank? ? reader.name : reader.conference_subscription.member_name
                 else
@@ -100,7 +100,7 @@ module Conference::BranchAdminExtension
               end)
               next_row_index += 1
             end
-            if reader.conference_subscription.couple? && (reader.conference_subscription.partner_group_ids.try(:include?, @group.id) || [@group.id, @group.parent_id].include?(Radiant::Config['conference_group_id'].to_i))
+            if reader.conference_subscription.couple? && (reader.conference_subscription.partner_group_ids.try(:include?, @group.id) || [@group.id, @group.parent_id].include?(Radiant::Config['conference.root_group_id'].to_i))
               # Add partner row
               sheet.row(next_row_index).replace(columns.map do |k|
                 case k
@@ -114,7 +114,7 @@ module Conference::BranchAdminExtension
                 when 'postal_address' then reader.postal_address_string
                 when 'registered_for' then reader.groups.select{|g| g.is_conference_group? && (!g.is_conference_day_option? || reader.conference_subscription.partner_group_ids.to_a.map(&:to_i).include?(g.id))}.map{|g| g.name}.join(", ")
                 when 'full_registration' then
-                  reader.groups.include?(@template.conference_group) ? "Full" : "Partial"
+                  reader.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial"
                 when 'day_options' then
                   if reader.conference_subscription.partner_group_ids.nil?
                     reader.groups.select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ")
