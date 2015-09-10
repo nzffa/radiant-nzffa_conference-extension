@@ -3,7 +3,7 @@ module Conference::GroupExtension
     klass.class_eval do
       def self.conference_groups
         begin
-          self.conference_groups_holder.children
+          self.conference_groups_holder.try :children
         rescue ActiveRecord::RecordNotFound
           []
         end
