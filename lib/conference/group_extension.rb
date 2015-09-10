@@ -2,11 +2,7 @@ module Conference::GroupExtension
   def self.included(klass)
     klass.class_eval do
       def self.conference_groups
-        begin
-          self.conference_groups_holder.try :children
-        rescue ActiveRecord::RecordNotFound
-          []
-        end
+        self.conference_groups_holder.try(:children) || []
       end
       
       def self.conference_groups_holder
