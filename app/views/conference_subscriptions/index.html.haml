@@ -6,8 +6,11 @@
   or as
   = link_to "XLS", conference_subscriptions_path(:format => :xls)
 
-%br
-= link_to "Find a member to register for the conference", :invite_conference_subscriptions
+  %br
+  = link_to "Email all conference registrants", :email_conference_subscriptions
+  
+  %br
+  = link_to "Find a member to register for the conference", :invite_conference_subscriptions
   
 %table{:class => 'px1'}
   %thead

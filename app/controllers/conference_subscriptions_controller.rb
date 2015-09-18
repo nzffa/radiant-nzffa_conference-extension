@@ -4,7 +4,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   before_filter :require_secretary_access, :only => [:index, :destroy]
   
   def index
-    @readers = Reader.in_groups(Group.all.select{|g| g.is_conference_group?})
+    @readers = Reader.in_groups([Group.conference_groups_holder] + Group.conference_groups)
     
     respond_to do |format|
       format.xls do
@@ -198,6 +198,10 @@ class ConferenceSubscriptionsController < ReaderActionController
     if email = params[:email] and !email.blank?
       @readers = Reader.all(:conditions => ["email LIKE ?", "%#{email}%"])
     end
+  end
+  
+  def email
+    @readers = Reader.in_groups([Group.conference_groups_holder] + Group.conference_groups).select{|r| r.conference_subscription }
   end
   
   def pay_online
