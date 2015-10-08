@@ -1,6 +1,9 @@
 %h2
   = @group.name
-  = @group.is_conference_group? ? "Registrants" : "Members"
+  - if @group.is_conference_group? 
+    = "Registrants (#{@count})"
+  - else
+    Members
 
 %p
   Do you want to see 

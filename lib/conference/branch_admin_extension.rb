@@ -14,7 +14,9 @@ module Conference::BranchAdminExtension
       def index_with_conference_hook
         @group = Group.find(params[:group_id])
         if @group.is_conference_group?
-          @readers = @group.readers
+          @readers = @group.readers.select{|r| r.conference_subscription }
+          @count = @readers.map{|r| r.conference_subscription.couple? ? 2 : 1}.sum
+          
           respond_to do |format|
             format.html { render :index_for_conference }
             format.csv { render_csv_of_readers_with_conference_hook }
@@ -44,7 +46,7 @@ module Conference::BranchAdminExtension
                 payment_method.concat " (#{r.conference_subscription.id})" if payment_method == 'online'
                 csv << [r.nzffa_membership_id, name, r.email, r.phone, r.postal_address_string, r.post_city, payment_method, r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group? && r.conference_subscription.group_ids.map(&:to_i).include?(g.id)}.map{|g| g.name }.join(", "), r.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial", Group.find(r.conference_subscription.group_ids).map{|g| g.name}.join(", ") ]
               end
-              if r.conference_subscription.couple? && (r.conference_subscription.partner_group_ids.try(:include?, @group.id) || [@group.id, @group.parent_id].include?(Radiant::Config['conference.root_group_id'].to_i))
+              if r.conference_subscription.couple? && (r.conference_subscription.partner_group_ids.try(:include?, @group.id) || [@group.id, @group.parent_id].include?(Group.conference_groups_holder.to_i))
                 # Add row for partner;
                 options_string = r.conference_subscription.partner_group_ids.nil? ? r.groups.select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ") : Group.find(r.conference_subscription.partner_group_ids).map{|g| g.name}.join(", ")
                 payment_method = r.conference_subscription.payment_method
@@ -70,12 +72,12 @@ module Conference::BranchAdminExtension
           book = Spreadsheet::Workbook.new
           sheet = book.create_worksheet :name => 'Readers export'
           
-          sheet.row(0).replace(["#{@group.name} downloaded #{Time.now.strftime("%Y-%m-%d")}"])
+          sheet.row(0).replace(["#{@group.name} subscriptions (#{@count}) downloaded #{Time.now.strftime("%Y-%m-%d")}"])
           sheet.row(1).replace(columns.map{|k| k.capitalize})
           
           next_row_index = 2
           
-          @readers.select{|r| r.conference_subscription }.each do |reader|
+          @readers.each do |reader|
             if !reader.conference_subscription.couple? || reader.conference_subscription.group_ids.map(&:to_i).include?(@group.id)
               sheet.row(next_row_index).replace(columns.map do |k|
                 case k
@@ -100,7 +102,7 @@ module Conference::BranchAdminExtension
               end)
               next_row_index += 1
             end
-            if reader.conference_subscription.couple? && (reader.conference_subscription.partner_group_ids.try(:include?, @group.id) || [@group.id, @group.parent_id].include?(Radiant::Config['conference.root_group_id'].to_i))
+            if reader.conference_subscription.couple? && (reader.conference_subscription.partner_group_ids.try(:include?, @group.id) || [@group.id, @group.parent_id].include?(Group.conference_groups_holder.id))
               # Add partner row
               sheet.row(next_row_index).replace(columns.map do |k|
                 case k
@@ -132,7 +134,7 @@ module Conference::BranchAdminExtension
             
           end
     
-          filename = "#{@group.name}-#{Time.now.strftime("%Y-%m-%d")}.xls"
+          filename = "#{@group.name} (#{@count})-#{Time.now.strftime("%Y-%m-%d")}.xls"
           tmp_file = Tempfile.new(filename)
           book.write tmp_file.path
           send_file tmp_file.path, :filename => filename

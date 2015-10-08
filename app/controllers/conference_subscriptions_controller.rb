@@ -4,7 +4,8 @@ class ConferenceSubscriptionsController < ReaderActionController
   before_filter :require_secretary_access, :only => [:index, :destroy]
   
   def index
-    @readers = Reader.in_groups([Group.conference_groups_holder] + Group.conference_groups)
+    @readers = Reader.in_groups([Group.conference_groups_holder] + Group.conference_groups).select{|r| r.conference_subscription }
+    @count = @readers.map{|r| r.conference_subscription.couple? ? 2 : 1}.sum
     
     respond_to do |format|
       format.xls do
@@ -12,12 +13,11 @@ class ConferenceSubscriptionsController < ReaderActionController
         require 'spreadsheet'
         book = Spreadsheet::Workbook.new
         sheet = book.create_worksheet :name => 'Readers export'
-        
-        sheet.row(0).replace(["All conference subscriptions - downloaded #{Time.now.strftime("%Y-%m-%d")}"])
+        sheet.row(0).replace(["All conference subscriptions (#{@count}) - downloaded #{Time.now.strftime("%Y-%m-%d")}"])
         sheet.row(1).replace(columns.map{|k| k.capitalize})
         next_row_index = 2
         
-        @readers.select{|r| r.conference_subscription }.each_with_index do |reader, i|
+        @readers.each_with_index do |reader, i|
           sheet.row(next_row_index).replace(columns.map do |k|
             case k
             when 'notes', 'do_not_publish_contact_details', 'first_conference', 'pickup_from_incoming_flight', 'pickups_from_to_conference' then reader.conference_subscription.try(:send, k).to_s
@@ -72,7 +72,7 @@ class ConferenceSubscriptionsController < ReaderActionController
           
         end
   
-        filename = "All conference subscriptions-#{Time.now.strftime("%Y-%m-%d")}.xls"
+        filename = "All conference subscriptions (#{@count})-#{Time.now.strftime("%Y-%m-%d")}.xls"
         tmp_file = Tempfile.new(filename)
         book.write tmp_file.path
         send_file tmp_file.path, :filename => filename
@@ -87,7 +87,6 @@ class ConferenceSubscriptionsController < ReaderActionController
         csv_string = csv_lib.generate do |csv|
           csv << %w[nzffa_membership_id name email phone postal_address post_city paid_by date_paid levy notes do_not_publish_contact_details first_conference pickup_from_incoming_flight pickups_from_to_conference registered_for full_registration day_options]
           @readers.each do |r|
-            next unless r.conference_subscription
             name = r.conference_subscription.member_name.blank? ? r.name : r.conference_subscription.member_name
             csv << [r.nzffa_membership_id, name, r.email, r.phone, r.postal_address_string, r.post_city, r.conference_subscription.try(:payment_method), r.conference_subscription.try(:paid_at).try(:strftime, "%b %d"), r.conference_subscription.try(:paid_amount), r.conference_subscription.try(:notes), r.conference_subscription.try(:do_not_publish_contact_details), r.conference_subscription.try(:first_conference), r.conference_subscription.try(:pickup_from_incoming_flight), r.conference_subscription.try(:pickups_from_to_conference), r.groups.select{|g| g.is_conference_group?}.map{|g| g.name }.join(", "), r.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial", Group.find(r.conference_subscription.group_ids).select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ") ]
             if r.conference_subscription.couple?
@@ -99,7 +98,7 @@ class ConferenceSubscriptionsController < ReaderActionController
         end
 
         headers["Content-Type"] ||= 'text/csv'
-        headers["Content-Disposition"] = "attachment; filename=\"All conference subscriptions-#{DateTime.now.to_s}.csv\""
+        headers["Content-Disposition"] = "attachment; filename=\"All conference subscriptions (#{@count})-#{DateTime.now.to_s}.csv\""
         render :text => csv_string
       end
       format.html do
