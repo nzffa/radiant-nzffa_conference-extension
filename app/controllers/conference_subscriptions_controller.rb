@@ -298,7 +298,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     subscription.group_ids.concat option_group_ids
     subscription.partner_group_ids = partner_option_group_ids
     
-    if subscription.group_ids.map(&:to_i).include? Group.conference_groups_holder.id
+    if subscription.group_ids.map(&:to_i).include?(Group.conference_groups_holder.id) and Group.conference_groups_holder.conference_price.to_i > 0
       subscription.levy = Group.conference_groups_holder.conference_price.to_i
       subscription.levy *= 2 if subscription.couple?
       # After taking 'full conference' price, check for extra levy in day options
