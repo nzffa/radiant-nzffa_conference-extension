@@ -189,7 +189,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   def invite
     if nzffa_id = params[:nzffa_id] and !nzffa_id.blank?
       reader = Reader.find_by_nzffa_membership_id(nzffa_id)
-      redirect_to branch_admin_edit_path(Radiant::Config['conference.root_group_id'], reader.nzffa_membership_id) unless reader.nil?
+      redirect_to branch_admin_edit_path(Group.conference_groups_holder.id, reader.nzffa_membership_id) unless reader.nil?
     end
     if name = params[:name] and !name.blank?
       @readers = Reader.all(:conditions => ["surname LIKE :name OR forename LIKE :name", {:name => "%#{name}%"}])
