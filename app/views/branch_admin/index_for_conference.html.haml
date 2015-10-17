@@ -30,12 +30,9 @@
   = link_to "XLS (for Excel)", url_for(:format => :xls)
 
 - if @group.is_conference_group?
-  %br
-  = link_to "Find a member to register for the conference", :invite_conference_subscriptions
+  %p= link_to "Find a member to register for the conference", :invite_conference_subscriptions
 
-%br
-
-%table{:class => 'px1', :style => "border:0; cellspacing: 0"}
+%table{:class => 'px1', :border => 0, :cellspacing => 0, :style => "margin-top: 1em"}
   %thead
     %th nzffa id
     %th Name
