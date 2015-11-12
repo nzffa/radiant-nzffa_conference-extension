@@ -264,7 +264,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   
   private
   def require_secretary_access
-    unless current_reader.is_secretary?
+    unless current_reader && current_reader.is_secretary?
       flash[:error] = "You do not have secretary access"
       redirect_to reader_dashboard_url and return
     end
