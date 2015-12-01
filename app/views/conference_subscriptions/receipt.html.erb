@@ -61,11 +61,17 @@ GST# 76-367-043
 </td>
 <td class='price' style='width: 30%'> </td>
 </tr>
-<% @subscription.reader.groups.select{|g| g.is_conference_group?}.each do |group| %> 
-<tr>
-  <td><b><%= group.name %></b>: <%= group.description %></td>
-  <td class="price"> </td>
-</tr>
+<% @subscription.reader.groups.select{|g| g.is_conference_group? && !g.is_conference_day_option?}.each do |group| %> 
+  <tr>
+    <td><b><%= group.name %></b>: <%= group.description %></td>
+    <td class="price"> </td>
+  </tr>
+  <% @subscription.reader.groups.select{|g| g.is_conference_day_option? && g.parent == group}.each do |day_option| %>
+    <tr>
+      <td style="padding-left: 12px"><b><%= day_option.name %></b>: <%= day_option.description %></td>
+      <td class="price"> </td>
+    </tr>
+  <% end %>
 <% end %>
 
 <tr>

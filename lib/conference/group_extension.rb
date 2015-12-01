@@ -16,7 +16,7 @@ module Conference::GroupExtension
   end
   
   def is_conference_group?
-    return (self == Group.conference_groups_holder || Group.conference_groups.include?(self))
+    (ancestors << self).include? Group.conference_groups_holder
   end
   
   def is_conference_day_option?
