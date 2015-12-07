@@ -1,13 +1,14 @@
+-  conference_subscription = @reader.conference_subscription || @reader.conference_subscriptions.build
 %li{:id => "group_#{group.id}", :data => {:day_registration_fee => group.day_registration_fee.to_i, :extra_levy => group.extra_levy.to_i}}
   - if level == 2
     // Day option
-    = radio_button_tag("conference_day_#{group.parent.id}_option", group.id, @reader.conference_subscription.has_group?(group.id), :class => 'member')
+    = radio_button_tag("conference_day_#{group.parent.id}_option", group.id, conference_subscription.has_group?(group.id), :class => 'member')
 
-    = radio_button_tag("conference_day_#{group.parent.id}_partner_option", group.id, @reader.conference_subscription.partner_has_group?(group.id), :class => 'partner', :style => "display: none")
+    = radio_button_tag("conference_day_#{group.parent.id}_partner_option", group.id, conference_subscription.partner_has_group?(group.id), :class => 'partner', :style => "display: none")
       
     = label_tag("conference_day_#{group.parent.id}_option_#{group.id}", content_tag(:strong, group.name))
   - else
-    = check_box_tag("conference_subscription[group_ids][]", group.id, @reader.conference_subscription.has_group?(group.id), :id => "group_ids_#{group.id}")
+    = check_box_tag("conference_subscription[group_ids][]", group.id, conference_subscription.has_group?(group.id), :id => "group_ids_#{group.id}")
     
     = label_tag("group_ids_#{group.id}", content_tag(:strong, group.name))
     
