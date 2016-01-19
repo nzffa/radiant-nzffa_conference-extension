@@ -32,7 +32,7 @@ class ConferenceSubscriptionsController < ReaderActionController
             when 'full_registration' then
               reader.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial"
             when 'day_options' then
-              Group.find(reader.conference_subscription.group_ids).select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ")
+              Group.find(reader.conference_subscription.group_ids).select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ") unless reader.conference_subscription.group_ids.to_a.empty?
             when 'name' then
               reader.conference_subscription.member_name.blank? ? reader.name : reader.conference_subscription.member_name
             else
