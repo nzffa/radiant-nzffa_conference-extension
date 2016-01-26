@@ -93,7 +93,11 @@ module Conference::BranchAdminExtension
                 when 'full_registration' then
                   reader.groups.include?(Group.conference_groups_holder) ? "Full" : "Partial"
                 when 'day_options' then
-                  Group.find(reader.conference_subscription.group_ids).map{|g| g.name}.join(", ")
+                  if reader.conference_subscription.group_ids.nil?
+                    reader.groups.select{|g| g.is_conference_day_option?}.map{|g| g.name}.join(", ")
+                  else
+                    Group.find(reader.conference_subscription.group_ids).map{|g| g.name}.join(", ")
+                  end
                 when 'name' then
                   reader.conference_subscription.member_name.blank? ? reader.name : reader.conference_subscription.member_name
                 else
