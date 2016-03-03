@@ -210,7 +210,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     conference_subscription = ConferenceSubscription.find params[:id]
     redirect_to PxPayParty.payment_url_for(:amount => conference_subscription.levy,
                                            :merchant_reference => "ConferenceSubscription:#{conference_subscription.id}",
-                                           :return_url => payment_finished_conference_subscription_url)
+                                           :return_url => "http://#{request.host}#{payment_finished_conference_subscription_url}" )
     
   end
   
