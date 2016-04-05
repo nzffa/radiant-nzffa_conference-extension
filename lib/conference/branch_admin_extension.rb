@@ -16,7 +16,7 @@ module Conference::BranchAdminExtension
         if @group.is_conference_group?
           @readers = @group.readers.select{|r| r.conference_subscription }
           @count = @readers.map{|r|
-            if r.conference_subscription.has_group? @group.id && r.conference_subscription.partner_has_group? @group.id
+            if r.conference_subscription.has_group?(@group.id) && r.conference_subscription.partner_has_group?(@group.id)
               2
             else
               1
