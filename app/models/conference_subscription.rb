@@ -10,7 +10,7 @@ class ConferenceSubscription < ActiveRecord::Base
   end
   
   def partner_has_group? id
-    partner_group_ids && partner_group_ids.map(&:to_i).include?(id)
+    couple? && partner_group_ids && partner_group_ids.map(&:to_i).include?(id)
   end
   
   def couple?
