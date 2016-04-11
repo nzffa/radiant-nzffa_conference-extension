@@ -6,11 +6,33 @@ class ConferenceSubscription < ActiveRecord::Base
   accepts_nested_attributes_for :reader
   
   def has_group? id
-    group_ids && group_ids.map(&:to_i).include?(id)
+    group_ids.to_a.map(&:to_i).include?(id)
   end
   
   def partner_has_group? id
-    couple? && partner_group_ids && partner_group_ids.map(&:to_i).include?(id)
+    couple? && (
+      partner_group_ids.to_a.map(&:to_i).include?(id) || !Group.find(id).is_conference_day_option?
+    )
+  end
+  
+  def day_groups
+    Group.find_all_by_id(group_ids, :conditions => ["ancestry = ?", Group.conference_groups_holder.id.to_s])
+  end
+  
+  def day_option_groups
+    Group.find_all_by_id(group_ids, :conditions => ["ancestry like ?", "#{Group.conference_groups_holder.id}/%"])
+  end
+  
+  def partner_day_option_groups
+    Group.find(partner_group_ids)
+  end
+  
+  def registered_for_groups
+    day_groups.map{|g| [g, g.children.find_all_by_id(day_option_groups)]}.flatten
+  end
+  
+  def partner_registered_for_groups
+    day_groups.map{|g| [g, g.children.find_all_by_id(partner_day_option_groups)]}.flatten
   end
   
   def couple?

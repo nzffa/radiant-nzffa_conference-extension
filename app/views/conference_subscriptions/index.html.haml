@@ -40,7 +40,7 @@
         %td
           =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
         %td
-          =reader.groups.select{|g| reader.conference_subscription.group_ids.to_a.map(&:to_i).include?(g.id)}.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
+          =reader.conference_subscription.registered_for_groups.map{|g| link_to g.name, branch_admin_path(g)}.join ",<br/> "
         %td= reader.conference_subscription.payment_method
         %td= reader.conference_subscription.paid_at.try(:strftime, "%d %B %H:%M")
         %td= number_to_currency reader.conference_subscription.paid_amount
@@ -59,7 +59,7 @@
             =raw [reader.phone, reader.mobile].select{|f| f.present?}.join('<br>')
           %td
             =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
-          %td=reader.groups.select{|g| g.ancestors.include?(Group.conference_groups_holder) && (!g.is_conference_day_option? || reader.conference_subscription.partner_group_ids.to_a.map(&:to_i).include?(g.id)) }.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
+          %td=reader.conference_subscription.partner_registered_for_groups.map{|g| link_to g.name, branch_admin_path(g)}.join ", "
           
           %td= reader.conference_subscription.payment_method
           %td= reader.conference_subscription.paid_at.try(:strftime, "%d %B %H:%M")
