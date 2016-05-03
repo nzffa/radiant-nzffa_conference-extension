@@ -13,5 +13,6 @@
     %td{:style => 'vertical-align: top; width: 50%'}
       %h2 Subscription
       =render 'subscriptions/status'
-      %h2 Conference
-      = render 'conference_subscriptions/status'
+      - if Group.conference_groups_holder
+        %h2 Conference
+        = render 'conference_subscriptions/status'
