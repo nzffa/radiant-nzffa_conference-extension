@@ -50,7 +50,7 @@
           %td
             =raw [reader.phone, reader.mobile].select{|f| f.present?}.join('<br>')
           %td
-            =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
+            =raw reader.postal_address_array.join('<br>')
           - if reader.conference_subscription
             %td= reader.conference_subscription.registered_for_groups.map{|g| link_to g.name, branch_admin_path(g)}.join ", <br/>"
             %td
@@ -77,7 +77,7 @@
             %td
               =raw [reader.phone, reader.mobile].select{|f| f.present?}.join('<br>')
             %td
-              =raw reader.postal_address_array.select{|f| f.present?}.join('<br>')
+              =raw reader.postal_address_array.join('<br>')
             %td=reader.conference_subscription.partner_registered_for_groups.map{|g| link_to g.name, branch_admin_path(g)}.join ", <br/>"
             %td
               - payment_method = reader.conference_subscription.payment_method
