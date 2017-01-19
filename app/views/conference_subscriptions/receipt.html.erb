@@ -56,7 +56,7 @@ GST# 76-367-043
   <strong>Please check your details and advise if there are any errors to the Registrar's email.</strong><br />
   <p>
     <%= @subscription.reader.forename %> <%= @subscription.reader.surname %><br />
-    <%= @subscription.reader.postal_address_array.join('<br/>') %>
+    <%= @subscription.reader.postal_address.compact.join('<br/>') %><br />
   </p>
 </td>
 <td class='price' style='width: 30%'> </td>
