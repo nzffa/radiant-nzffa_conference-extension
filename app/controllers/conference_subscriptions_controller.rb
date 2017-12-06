@@ -2,6 +2,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   helper :reader
   before_filter :subscription, :only => [:new, :edit, :receipt]
   before_filter :require_secretary_access, :only => [:index, :destroy]
+  skip_before_filter :require_reader, :only => :payment_finished
   
   def index
     @readers = Reader.in_groups([Group.conference_groups_holder] + Group.conference_groups).select{|r| r.conference_subscription }
@@ -240,7 +241,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     @reader ||= if params[:conference_subscription]
       Reader.find(params[:conference_subscription][:reader_id])
     elsif params[:id]
-      subscription.reader
+      ConferenceSubscription.find(params[:id]).reader
     else
       current_reader
     end
