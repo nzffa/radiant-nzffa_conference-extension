@@ -8,7 +8,7 @@
       
     = label_tag("conference_day_#{group.parent.id}_option_#{group.id}", content_tag(:strong, group.name))
   - else
-    = check_box_tag("conference_subscription[group_ids][]", group.id, conference_subscription.has_group?(group.id), :id => "group_ids_#{group.id}")
+    = check_box_tag("conference_subscription[group_ids][]", group.id, conference_subscription.has_group?(group.id), :id => "group_ids_#{group.id}", :class => ("tristatable" if level.to_i < 2))
     
     = label_tag("group_ids_#{group.id}", content_tag(:strong, group.name))
     
