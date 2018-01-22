@@ -49,6 +49,14 @@
     Is this your first conference?
   
   %br
+  - if Radiant::Config['conference.ask_flight_info_for_pickup']
+    %label{:for => 'pickup_from_incoming_flight'}
+      Would you like to be met at the airport/train station from your incoming journey? If so, please enter your arrival time and flight/train:
+      %br
+      = f.text_field :pickup_from_incoming_flight
+  
+    %br
+  
   %label{:for => 'pickups_from_to_conference'}
     Please enter where you will be staying:
     %br

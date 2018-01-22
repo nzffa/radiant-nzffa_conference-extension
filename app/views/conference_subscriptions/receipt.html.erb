@@ -95,8 +95,8 @@ GST# 76-367-043
 <tr>
   <td>
     <%= "This is your first conference." if @subscription.first_conference %>
-    <%= "<br />You will be staying at #{@subscription.pickups_from_to_conference}" if @subscription.pickups_from_to_conference %>
-    <%= "<br />Your arrival time and flight, for pickup from the airport: #{@subscription.pickup_from_incoming_flight}" if @subscription.pickup_from_incoming_flight %>
+    <%= "<br />#{Radiant::Config['conference.receipt_label_hotel']} #{@subscription.pickups_from_to_conference}" if @subscription.pickups_from_to_conference %>
+    <%= "<br />#{Radiant::Config['conference.receipt_label_flight_pickup']} #{@subscription.pickup_from_incoming_flight}" if @subscription.pickup_from_incoming_flight %>
     <%= "<br />You DO NOT want your contact details printed in the conference proceedings" if @subscription.do_not_publish_contact_details %>
     <br/>
     Dietary requirements and next of kin:<br/>
