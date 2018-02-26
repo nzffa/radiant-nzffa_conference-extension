@@ -258,9 +258,10 @@ class ConferenceSubscriptionsController < ReaderActionController
   end
   
   private
-  def require_secretary_access
-    unless current_reader && current_reader.is_secretary?
-      flash[:error] = "You do not have secretary access"
+  def require_registrar_access
+    unless current_reader &&
+        Group.conference_groups_holder.try(:field, 'registrar_access_reader_ids').to_s.split(',').map(&:to_i).include? current_reader.id
+      flash[:error] = "You do not have registrar access"
       redirect_to reader_dashboard_url and return
     end
   end

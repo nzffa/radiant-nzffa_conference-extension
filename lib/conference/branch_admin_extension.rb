@@ -33,6 +33,19 @@ module Conference::BranchAdminExtension
       end
       alias_method_chain :index, :conference_hook
       
+      def require_branch_secretary_with_conference_hook
+        require_reader
+        @group = Group.find(params[:group_id])
+        if !@group.is_conference_group?
+          require_branch_secretary_without_conference_hook
+        else
+          unless Group.conference_groups_holder.try(:field, 'registrar_access_reader_ids').to_s.split(',').map(&:to_i).include? current_reader.id
+            raise ReaderError::AccessDenied, 'You must be specified as a conference registrar to access this page'
+          end
+        end
+      end
+      alias_method_chain :require_branch_secretary, :conference_hook
+      
       def render_csv_of_readers_with_conference_hook
         if RUBY_VERSION =~ /1.9/
           require 'csv'
