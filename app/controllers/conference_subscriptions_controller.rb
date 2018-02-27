@@ -1,7 +1,7 @@
 class ConferenceSubscriptionsController < ReaderActionController
   helper :reader
   before_filter :subscription, :only => [:new, :edit, :receipt]
-  before_filter :require_secretary_access, :only => [:index, :destroy]
+  before_filter :require_registrar_access, :only => [:index, :destroy]
   skip_before_filter :require_reader, :only => :payment_finished
   
   def index
