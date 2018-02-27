@@ -261,7 +261,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   def require_registrar_access
     unless (
       current_reader &&
-      Group.conference_groups_holder.try(:field, 'registrar_access_reader_ids').try(:content).to_s.split(',').map(&:to_i).include? current_reader.id
+      Group.conference_groups_holder.homepage.try(:field, 'registrar_access_reader_ids').try(:content).to_s.split(',').map(&:to_i).include?(current_reader.id)
       )
       flash[:error] = "You do not have registrar access"
       redirect_to reader_dashboard_url and return
