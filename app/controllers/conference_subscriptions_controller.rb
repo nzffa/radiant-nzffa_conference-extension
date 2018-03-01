@@ -250,7 +250,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   def subscription
     if params[:id]
       @subscription = ConferenceSubscription.find(params[:id])
-      require_secretary_access if @subscription.reader_id != current_reader.id
+      require_registrar_access if @subscription.reader_id != current_reader.id
       @subscription
     else
       @subscription ||= (reader.conference_subscription || reader.conference_subscriptions.create(:conference_group_id => Group.conference_groups_holder.id))
