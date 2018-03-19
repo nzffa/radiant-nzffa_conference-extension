@@ -105,28 +105,28 @@ class ConferenceSubscriptionsController < ReaderActionController
   def create
     # target_group_ids = params[:conference_subscription][:group_ids].delete
     subscription.update_attributes(params[:conference_subscription])
-    if subscription.valid?
-      update_subscription_levy_and_group_ids_from_params(subscription, params)
-      if !subscription.paid? && subscription.paid_amount > 0
-        subscription.update_attribute(:paid_at, Time.now)
+    if @subscription.valid?
+      update_subscription_levy_and_group_ids_from_params(@subscription, params)
+      if !@subscription.paid? && @subscription.paid_amount > 0
+        @subscription.update_attribute(:paid_at, Time.now)
       end
-      if subscription.paid?
-        subscription.group_ids.map{ |gid|
+      if @subscription.paid?
+        @subscription.group_ids.map{ |gid|
           reader.groups << Group.find(gid)
         }
-        subscription.partner_group_ids.map{ |gid|
+        @subscription.partner_group_ids.map{ |gid|
           reader.groups << Group.find(gid)
         }
-        subscription.paid_at ||= Time.now
+        @subscription.paid_at ||= Time.now
       end
       
-      subscription.save      
+      @subscription.save      
     else
       flash[:error] = 'Something went wrong with your subscription'
     end
     
     if reader == current_reader
-      redirect_to subscription.paid? ? :edit : pay_online_conference_subscription_path(subscription)
+      redirect_to @subscription.paid? ? :edit : pay_online_conference_subscription_path(subscription)
     else
       redirect_to conference_subscriptions_path
     end
@@ -144,29 +144,29 @@ class ConferenceSubscriptionsController < ReaderActionController
   
   def update
     subscription.update_attributes(params[:conference_subscription])
-    update_subscription_levy_and_group_ids_from_params(subscription, params)
-    if !subscription.paid? && subscription.paid_amount > 0
-      subscription.update_attribute(:paid_at, Time.now)
+    update_subscription_levy_and_group_ids_from_params(@subscription, params)
+    if !@subscription.paid? && @subscription.paid_amount > 0
+      @subscription.update_attribute(:paid_at, Time.now)
     end
-    if subscription.paid?
-      subscription.reader.memberships.select{|m| m.group && m.group.is_conference_group?}.each{|m| m.destroy}
-      subscription.group_ids.map{ |gid|
+    if @subscription.paid?
+      @subscription.reader.memberships.select{|m| m.group && m.group.is_conference_group?}.each{|m| m.destroy}
+      @subscription.group_ids.map{ |gid|
         reader.groups << Group.find(gid)
       }
-      subscription.partner_group_ids.map{ |gid|
+      @subscription.partner_group_ids.map{ |gid|
         reader.groups << Group.find(gid)
       }
     end
         
-    subscription.save
+    @subscription.save
     flash[:notice] = "Your conference subscription has been updated"
     
-    if !subscription.paid? && subscription.payment_method == 'online'
-      redirect_to pay_online_conference_subscription_path(subscription)
+    if !@subscription.paid? && @subscription.payment_method == 'online'
+      redirect_to pay_online_conference_subscription_path(@subscription)
     elsif current_reader.is_secretary?
       redirect_to branch_admin_path(Group.conference_groups_holder)
     else
-      redirect_to edit_conference_subscription_path(subscription.id)
+      redirect_to edit_conference_subscription_path(@subscription.id)
     end
   end
   
@@ -272,7 +272,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     subscription.levy = 0
     option_group_ids = []
     partner_option_group_ids = []
-    subscription.group_ids.map(&:to_i).each do |id|
+    subscription.group_ids.to_a.map(&:to_i).each do |id|
       group = Group.find(id)
       unless !group.is_conference_group? 
         subscription.levy += group.conference_price.to_i
@@ -296,7 +296,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     subscription.group_ids.concat option_group_ids
     subscription.partner_group_ids = partner_option_group_ids
     
-    if subscription.group_ids.map(&:to_i).include?(Group.conference_groups_holder.id) and Group.conference_groups_holder.conference_price.to_i > 0
+    if subscription.group_ids.to_a.map(&:to_i).include?(Group.conference_groups_holder.id) and Group.conference_groups_holder.conference_price.to_i > 0
       subscription.levy = Group.conference_groups_holder.conference_price.to_i
       subscription.levy *= 2 if subscription.couple?
       # After taking 'full conference' price, check for extra levy in day options
