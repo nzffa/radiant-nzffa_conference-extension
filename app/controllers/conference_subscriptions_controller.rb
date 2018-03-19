@@ -166,7 +166,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     elsif current_reader.is_secretary?
       redirect_to branch_admin_path(Group.conference_groups_holder)
     else
-      redirect_to :edit
+      redirect_to edit_conference_subscription_path(subscription.id)
     end
   end
   
