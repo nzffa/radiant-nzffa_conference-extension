@@ -10,4 +10,8 @@ module Conference::ReaderExtension
   def is_registered_for_conference?
     conference_subscription && (conference_subscription.paid?)
   end
+  
+  def is_conference_registrar?
+    Group.conference_groups_holder.homepage.try(:field, 'registrar_access_reader_ids').try(:content).to_s.split(',').map(&:to_i).include? id
+  end
 end

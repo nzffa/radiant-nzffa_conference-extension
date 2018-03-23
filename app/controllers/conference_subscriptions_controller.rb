@@ -138,7 +138,7 @@ class ConferenceSubscriptionsController < ReaderActionController
 
   def edit
     reader
-    (redirect_to(:back) and return) if @subscription.paid_online? && !reader.is_secretary?
+    (redirect_to(:back) and return) if @subscription.paid_online? && !reader.is_conference_registrar?
     render :new
   end
   
@@ -163,7 +163,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     
     if !@subscription.paid? && @subscription.payment_method == 'online'
       redirect_to pay_online_conference_subscription_path(@subscription)
-    elsif current_reader.is_secretary?
+    elsif current_reader.is_conference_registrar?
       redirect_to branch_admin_path(Group.conference_groups_holder)
     else
       redirect_to edit_conference_subscription_path(@subscription.id)

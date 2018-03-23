@@ -39,9 +39,7 @@ module Conference::BranchAdminExtension
         if !@group.is_conference_group?
           require_branch_secretary_without_conference_hook
         else
-          unless Group.conference_groups_holder.homepage.try(:field, 'registrar_access_reader_ids').try(:content).to_s.split(',').map(&:to_i).include? current_reader.id
-            raise ReaderError::AccessDenied, 'You must be specified as a conference registrar to access this page'
-          end
+          raise ReaderError::AccessDenied, 'You must be specified as a conference registrar to access this page' unless current_reader.is_conference_registrar?
         end
       end
       alias_method_chain :require_branch_secretary, :conference_hook
