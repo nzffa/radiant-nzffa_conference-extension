@@ -107,7 +107,7 @@ class ConferenceSubscriptionsController < ReaderActionController
     subscription.update_attributes(params[:conference_subscription])
     if @subscription.valid?
       update_subscription_levy_and_group_ids_from_params(@subscription, params)
-      if !@subscription.paid? && (@subscription.paid_amount > 0 || @subscription.payment_method == 'no-charge')
+      if !@subscription.paid? && (@subscription.paid_amount > 0 || (@subscription.payment_method == 'no-charge' && current_reader.is_conference_registrar?))
         @subscription.update_attribute(:paid_at, Time.now)
       end
       if @subscription.paid?
@@ -145,7 +145,7 @@ class ConferenceSubscriptionsController < ReaderActionController
   def update
     subscription.update_attributes(params[:conference_subscription])
     update_subscription_levy_and_group_ids_from_params(@subscription, params)
-    if !@subscription.paid? && (@subscription.paid_amount > 0 || @subscription.payment_method == 'no-charge')
+    if !@subscription.paid? && (@subscription.paid_amount > 0 || (@subscription.payment_method == 'no-charge' && current_reader.is_conference_registrar?))
       @subscription.update_attribute(:paid_at, Time.now)
     end
     if @subscription.paid?
