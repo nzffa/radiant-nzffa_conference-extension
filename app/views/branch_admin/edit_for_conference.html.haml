@@ -100,7 +100,7 @@
     %br
 
     Payment method:
-    = f.select :payment_method, ["cheque", "direct-credit", "credit-card", "online"]
+    = f.select :payment_method, ["cheque", "direct-credit", "credit-card", "online", "no-charge"]
     %br
     = f.label :paid_amount, "Paid amount"
     = f.text_field :paid_amount
