@@ -293,7 +293,7 @@ class ConferenceSubscriptionsController < ReaderActionController
         end
       end
     end
-    subscription.group_ids.concat option_group_ids
+    subscription.group_ids.to_a.concat option_group_ids
     subscription.partner_group_ids = partner_option_group_ids
     
     if subscription.group_ids.to_a.map(&:to_i).include?(Group.conference_groups_holder.id) and Group.conference_groups_holder.conference_price.to_i > 0
