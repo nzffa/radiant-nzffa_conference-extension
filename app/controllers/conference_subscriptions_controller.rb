@@ -307,8 +307,8 @@ class ConferenceSubscriptionsController < ReaderActionController
       end
     else
       # Also check the 'full conference' group for a day registration levy (even though it is not checked)
-      subscription.levy += Group.conference_groups_holder.day_registration_fee
-      subscription.levy += Group.conference_groups_holder.day_registration_fee if subscription.couple?
+      subscription.levy += Group.conference_groups_holder.day_registration_fee.to_i
+      subscription.levy += Group.conference_groups_holder.day_registration_fee.to_i if subscription.couple?
       # Check for day_registration_fees
       subscription.levy += Group.find(subscription.group_ids).map(&:day_registration_fee).compact.sum
       # Check for day_registration_fees for partner
