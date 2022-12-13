@@ -47,16 +47,16 @@
         %p
           =r.label :mobile
           =r.text_field :mobile
-  
+
     = f.radio_button :single_or_couple, 'single'
     = f.label :single_or_couple_single, 'Single'
     = f.radio_button :single_or_couple, 'couple'
     = f.label :single_or_couple_couple, 'Couple'
-    
+
     %br
 
     = f.text_field :member_name, :placeholder => "Your own name", :class => 'partner', :style => "display: none"
-    
+
     %br
 
     = f.text_field :partner_name, :placeholder => "Your partner's name", :class => 'partner', :style => "display: none"
@@ -84,13 +84,13 @@
       Is this your first conference?
 
     %br
-    
+
     - if Radiant::Config['conference.ask_flight_info_for_pickup']
       %label{:for => 'pickup_from_incoming_flight'}
         Would you like to be met at the airport from your incoming flight? If so, please enter your arrival time and flight:
       %br
       = f.text_field :pickup_from_incoming_flight
-  
+
 
     %br
     %label{:for => 'pickups_from_to_conference'}
@@ -105,7 +105,12 @@
     = f.label :paid_amount, "Paid amount"
     = f.text_field :paid_amount
     %br
-    = f.submit 'Save conference subscription', :onclick => "return checkRadios()"
+    = f.label :paid_on, "Date paid"
+    = f.date_select :paid_at, order: [:day, :month, :year], include_blank: true
+    %span.notice
+      %b Warning:
+      the system regards a subscription as being paid or not based on this date being present! DO NOT change these to blank unless you are certain that the person in question has not yet paid.
+    %br
+    = f.submit 'Save conference subscription', onclick: "return checkRadios()"
 
   %script{:src => "/javascripts/extensions/conference/conference_groups.js"}
-
